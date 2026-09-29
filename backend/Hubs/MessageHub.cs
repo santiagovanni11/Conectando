@@ -109,7 +109,7 @@ public class MessageHub(
             {
                 ConversationId = conversationId,
                 UserId = userId,
-                DisplayName = Context.User?.FindFirst("unique_name")?.Value,
+                DisplayName = GetDisplayName(),
             });
     }
 }

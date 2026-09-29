@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Conectando.Api.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -32,9 +33,26 @@ public abstract class ConectandoHub(ILogger logger) : Hub
 {
     private readonly ILogger _logger = logger;
 
-    /// <summary>Identidad del usuario conectado, tomado del token.</summary>
-    protected Guid GetUserId() =>
-        Guid.Parse(Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+    /// <summary>
+    /// Identidad del usuario conectado, tomado del token.
+    /// </summary>
+    /// <remarks>
+    /// Delega en la extensión de <c>ClaimsPrincipal</c> en vez de repetir la
+    /// búsqueda. Antes lo hacía acá con <c>FindFirst(NameIdentifier)!</c> y sin
+    /// alternativas: el token trae los claims cortos (<c>nameid</c>, <c>sub</c>)
+    /// y, si no están mapeados al esquema de ASP.NET, esa búsqueda no encuentra
+    /// nada y revienta. Como el hub corta la conexión si <c>OnConnectedAsync</c>
+    /// falla, el síntoma era un chat que nunca recibía nada en vivo: el token
+    /// luz la sesión entera: la app sigue igual, con el token vencido.
+    /// Como el hub corta la conexión cuando <c>OnConnectedAsync</c> falla, el
+    /// síntoma era un chat que no recibía nada en vivo y sin dar error.
+    /// </remarks>
+    protected Guid GetUserId() => Context.User!.GetUserId();
+
+    /// <summary>Nombre visible del usuario conectado, o null si el token no lo trae.</summary>
+    protected string? GetDisplayName() =>
+        Context.User?.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value
+        ?? Context.User?.Identity?.Name;
 
     /// <summary>
     /// Entra al grupo del usuario al conectarse, para que los avisos que van
