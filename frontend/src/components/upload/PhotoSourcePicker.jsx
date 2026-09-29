@@ -9,7 +9,7 @@ import { useRef, useState } from 'react'
 import Icon from '../ui/Icon/Icon'
 import Modal from '../ui/Modal'
 
-const ACCEPTED = 'image/jpeg,image/png,image/webp,image/gif'
+import { ACCEPTED_IMAGE_TYPES as ACCEPTED } from '../../utils/images'
 
 export default function PhotoSourcePicker({
   trigger,

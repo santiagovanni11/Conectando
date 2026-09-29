@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useEditProfile } from '../../hooks/useEditProfile'
 import { mediaService } from '../../services/mediaService'
+import { IMAGE_ERROR_MESSAGE, MAX_IMAGE_BYTES, isSupportedImage } from '../../utils/images'
 import { PROFILE_LIMITS } from '../../constants/profile'
 import { ROUTES } from '../../constants/routes'
 import Input from '../ui/Input'
@@ -29,6 +30,14 @@ export default function EditProfileForm({ profile }) {
 
   async function handleImageSelect(file) {
     if (!file) return
+    // Se chequea antes de subir: es un upload de hasta 8 MB que el servidor
+    // iba a rechazar igual, y el mensaje llega más rápido y en el mismo
+    // lugar donde el usuario está mirando.
+    if (file.size > MAX_IMAGE_BYTES || !isSupportedImage(file)) {
+      setImageError(IMAGE_ERROR_MESSAGE)
+      return
+    }
+
     setUploading(true)
     setImageError('')
     try {

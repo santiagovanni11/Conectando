@@ -1,9 +1,14 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { postService } from '../services/postService'
 import { MAX_POST_MEDIA } from '../constants/post'
+import {
+  IMAGE_ERROR_MESSAGE,
+  MAX_IMAGE_BYTES,
+  isSupportedImage,
+} from '../utils/images'
 
-const MAX_FILE_BYTES = 8 * 1024 * 1024
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+
+
 
 export function usePostComposer(initialPost = null) {
   const initialMedia = initialPost?.media ?? []
@@ -28,9 +33,9 @@ export function usePostComposer(initialPost = null) {
       return
     }
 
-    const invalid = files.find((file) => file.size > MAX_FILE_BYTES || !ALLOWED_TYPES.includes(file.type))
+    const invalid = files.find((file) => file.size > MAX_IMAGE_BYTES || !isSupportedImage(file))
     if (invalid) {
-      setError('Solo imágenes JPG, PNG, WEBP o GIF de hasta 8 MB.')
+      setError(IMAGE_ERROR_MESSAGE)
       return
     }
 
