@@ -1,0 +1,54 @@
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--gutter);
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, var(--color-accent-wash), transparent 60%),
+    radial-gradient(50rem 26rem at -10% 110%, var(--color-warning-wash), transparent 60%),
+    var(--color-canvas);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: var(--space-8) var(--space-6);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.auth-card > a {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.auth-card__heading {
+  margin: var(--space-6) 0 var(--space-6);
+}
+
+.auth-card__heading h1 {
+  margin-bottom: var(--space-2);
+  font-size: clamp(var(--text-2xl), 5vw, var(--text-3xl));
+}
+
+.auth-card__heading p {
+  margin: 0;
+  color: var(--color-ink-soft);
+}
+
+.auth-footer {
+  display: flex;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-ink-soft);
+}
+
+.auth-footer a {
+  font-weight: var(--weight-semibold);
+  text-underline-offset: 3px;
+}

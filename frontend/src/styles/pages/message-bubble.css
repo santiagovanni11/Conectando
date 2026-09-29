@@ -1,0 +1,149 @@
+﻿/* Burbuja del mensaje, ticks de visto y estado borrado. */
+
+.message-bubble {
+  max-width: 75%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.message-bubble.is-own {
+  align-self: flex-end;
+  background: var(--color-accent);
+  color: #fff;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.message-bubble.is-theirs {
+  align-self: flex-start;
+  background: var(--color-surface-muted);
+  border-bottom-left-radius: 0.25rem;
+}
+
+/*
+ * El proyecto usa una paleta cálida (--color-ink), así que el autor se
+ * pinta con ese token: sobre la burbuja clara se lee sin problema.
+ */
+.message-bubble__author {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.message-bubble__text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Pie de la burbuja. Antes se acumulaban tres opacidades (0.75 del
+ * contenedor x 0.7 del texto) y sobre la burbuja de color quedaba casi
+ * ilegible. Ahora es color pleno y peso fuerte.
+ */
+.message-bubble__meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+  font-size: var(--text-xs);
+  align-self: flex-end;
+}
+
+.message-bubble__time {
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+}
+
+.message-bubble.is-own .message-bubble__time {
+  color: #fff;
+  opacity: 0.9;
+}
+
+.message-bubble__seen {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+/* "Enviado" sin confirmar: neutro pero legible. */
+.message-bubble.is-own .message-bubble__seen:not(.is-seen) {
+  color: #fff;
+  opacity: 0.85;
+}
+
+/* Doble tilde verde saturado, como los de WhatsApp. */
+.message-bubble__ticks {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-seen);
+}
+
+.message-bubble__ticks .icon--tick {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 3;
+  flex: none;
+}
+
+/* El segundo tick se superpone al primero para leer "✓✓" compacto,
+   como en WhatsApp. Sin esto quedan separados y parecen dos íconos. */
+.message-bubble__ticks .icon--tick + .icon--tick {
+  margin-left: -0.45rem;
+}
+
+.message-bubble__seen.is-seen {
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: var(--weight-bold);
+}
+
+.message-bubble__seen-label {
+  font-size: var(--text-xs);
+}
+/*
+ * Fila del hilo. Es el <li> que aporta el contenedor en columna, así que
+ * lleva la posición para que el menú contextual quede arriba a la derecha
+ * de la burbuja. Sin esto los mensajes se apilan en una sola línea.
+ */
+.message-thread__item {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+/* El menu va al lado contrario de la burbuja: izq. para propios, der. para ajenos. */
+.message-thread__item:has(.is-own) {
+  flex-direction: row-reverse;
+}
+
+/* El menu y su desplegable se alinean al mismo lado que la fila, para
+   que no queden colgados del borde de la pantalla. */
+.message-thread__item:has(.is-own) .message-menu__popover {
+  right: auto;
+  left: 0;
+}
+
+.message-bubble.is-deleted {
+  background: transparent;
+  border: 1px dashed var(--color-border);
+  color: var(--color-ink-soft);
+}
+
+.message-bubble__placeholder {
+  margin: 0;
+  font-style: italic;
+  font-size: var(--text-sm);
+}
+
+.message-bubble__edited {
+  font-size: 0.6875rem;
+  opacity: 0.75;
+  font-style: italic;
+}
+

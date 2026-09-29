@@ -1,0 +1,26 @@
+# Build artifacts
+bin
+obj
+dist
+node_modules
+
+# Logs
+*.log
+
+# Test output
+test_output.txt
+
+# Secretos. Nunca van al repo: en producción llegan por variables de entorno
+# (Render las guarda cifradas y no se suben al repo).
+.env
+.env.local
+.env.*.local
+appsettings.Production.json
+
+# Editores
+.vs/
+.idea/
+*.user
+
+# Build del frontend: lo genera el build del backend, no se versiona
+backend/wwwroot/

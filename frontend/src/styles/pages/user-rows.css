@@ -1,0 +1,61 @@
+/* ---------- Filas de usuario (amigos, solicitudes, notificaciones) ---------- */
+
+.friends-row,
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.friends-row + .friends-row,
+.notification + .notification {
+  border-top: 1px solid var(--color-border);
+}
+
+.friends-row__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.friends-row__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.friends-row__name {
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friends-row__meta {
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friends-row__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .friends-row {
+    flex-wrap: wrap;
+  }
+
+  .friends-row__actions {
+    width: 100%;
+  }
+}

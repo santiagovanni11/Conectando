@@ -1,0 +1,86 @@
+/* ---------- Tarjeta de persona (búsqueda y sugerencias) ---------- */
+
+.user-card-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+}
+
+.user-card:first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.user-card:last-child {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.user-card:only-child {
+  border-radius: var(--radius-lg);
+}
+
+.user-card + .user-card {
+  border-top: 1px solid var(--color-border);
+}
+
+.user-card__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.user-card__identity:hover .user-card__name {
+  text-decoration: underline;
+}
+
+.user-card__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-card__name {
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-card__meta,
+.user-card__mutual {
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-card__mutual {
+  color: var(--color-success);
+  font-size: var(--text-xs);
+}
+
+.user-card__tag {
+  flex: none;
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.user-card__tag--friends {
+  color: var(--color-success);
+}

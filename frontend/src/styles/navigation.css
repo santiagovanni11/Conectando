@@ -1,0 +1,115 @@
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-bottom-nav);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: 3.5rem;
+  padding-inline: var(--gutter);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar__logo {
+  text-decoration: none;
+}
+
+.topbar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.topbar__username {
+  font-weight: var(--weight-medium);
+  color: var(--color-ink);
+}
+
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  font-weight: var(--weight-medium);
+  transition: color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Contador de aviso, como el globo rojo de la campana en Facebook. */
+.nav-item__badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-danger);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+/* En la barra de abajo el ícono va solo, como en la app móvil. */
+.bottom-nav .nav-item__badge {
+  top: 0.125rem;
+  right: 0.25rem;
+}
+
+.nav-item:hover {
+  color: var(--color-accent);
+  background-color: var(--color-accent-wash);
+}
+
+.nav-item--active {
+  color: var(--color-accent-strong);
+  background-color: var(--color-accent-wash);
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-bottom-nav);
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  min-height: calc(var(--tap-target) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-1) var(--gutter) env(safe-area-inset-bottom, 0px);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.bottom-nav .nav-item {
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  font-size: var(--text-xs);
+}
+
+.bottom-nav .nav-item__label {
+  line-height: 1;
+}
+
+.bottom-nav .icon-btn {
+  flex: 1;
+  min-height: var(--tap-target);
+}

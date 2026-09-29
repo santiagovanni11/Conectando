@@ -1,0 +1,131 @@
+﻿/* ---------- Card ---------- */
+
+.post-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.post-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-1);
+}
+
+.post-card__menu {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.post-card__menu-popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--space-2));
+  min-width: 10rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-tooltip);
+}
+
+.post-card__menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.post-card__menu-item + .post-card__menu-item {
+  border-top: 1px solid var(--color-border);
+}
+
+.post-card__menu-item:hover {
+  background-color: var(--color-surface-muted);
+}
+
+.post-card__menu-item--danger {
+  color: var(--color-danger);
+}
+
+/* ---------- Meta (me gusta / pie / comentarios) ---------- */
+
+.post-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-2);
+}
+
+.post-card__likes,
+.post-card__comments-link {
+  min-height: var(--tap-target);
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-align: left;
+  cursor: pointer;
+}
+
+.post-card__likes:hover,
+.post-card__comments-link:hover {
+  color: var(--color-accent-strong);
+  text-decoration: underline;
+}
+
+/* Sin comentarios: solo informativo, no se abre la seccion */
+.post-card__comments-link:disabled {
+  color: var(--color-ink-soft);
+  cursor: default;
+}
+
+.post-card__comments-link:disabled:hover {
+  text-decoration: none;
+}
+
+.post-card__content {
+  margin: 0;
+  padding: 0 var(--space-4);
+  color: var(--color-ink);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.post-card__caption-username {
+  font-weight: var(--weight-semibold);
+}
+
+.post-card__caption-text {
+  white-space: pre-wrap;
+}
+
+.post-card__more {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.post-card__more:hover {
+  color: var(--color-ink);
+}

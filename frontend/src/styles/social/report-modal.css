@@ -1,0 +1,71 @@
+﻿/* ---------- Modal de denuncia ---------- */
+
+/* El form es una columna para que el boton de enviar quede siempre abajo,
+   aunque la lista de motivos sea larga. */
+.report-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+
+.report-modal__lead {
+  margin: 0;
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+}
+
+.report-modal__reasons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.report-modal__legend {
+  padding: 0;
+  margin-bottom: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+/* Cada motivo es una fila completa: mas facil de tocar que un radio chico. */
+.report-modal__reason {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.report-modal__reason:hover {
+  background-color: var(--color-surface-muted);
+}
+
+.report-modal__reason:has(input:checked) {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-wash);
+}
+
+.report-modal__details-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.report-modal__done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.report-modal__done p {
+  margin: 0;
+  color: var(--color-ink-soft);
+}

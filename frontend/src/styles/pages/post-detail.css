@@ -1,0 +1,144 @@
+﻿/* ---------- Página de detalle (/posts/:id) ---------- */
+
+.post-detail-page {
+  width: 100%;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-detail {
+  width: 100%;
+}
+
+/* Mobile: una sola columna, post arriba y comentarios debajo */
+.post-detail__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.post-detail__media {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Post de solo texto: una sola columna, sin recuadro de imagen (estilo Facebook) */
+.post-detail--text {
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+.post-detail--text .post-detail__grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  overflow: hidden;
+}
+
+.post-detail--text .post-detail__content {
+  padding: var(--space-4);
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  white-space: pre-wrap;
+}
+
+.post-detail__side {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.post-detail__side-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-detail__side .comments-section {
+  border-top: 1px solid var(--color-border);
+}
+
+.post-detail__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface-muted);
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.post-detail__back:hover {
+  color: var(--color-ink);
+  background-color: var(--color-border);
+}
+
+@media (min-width: 768px) {
+  /* En el post de detalle no se muestra el botón de volver del panel */
+  .post-detail__back {
+    display: none;
+  }
+
+  /* Post de solo texto: ancho cómodo de lectura, como en Facebook */
+  .post-detail--text .post-detail__side {
+    border: 0;
+    border-radius: 0;
+    max-height: none;
+  }
+
+  /* Desktop estilo Instagram: foto a la izquierda, comentarios a la derecha */
+  .post-detail__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 26rem);
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .post-detail__media {
+    border: 0;
+    border-radius: 0;
+    background-color: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24rem;
+  }
+
+  .post-detail__media .post-gallery {
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .post-detail__media .post-gallery__item {
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+  }
+
+  .post-detail__side {
+    border: 0;
+    border-left: 1px solid var(--color-border);
+    border-radius: 0;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ---------- Feed page ---------- */

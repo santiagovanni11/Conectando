@@ -1,0 +1,129 @@
+/* ---------- Disparador (tarjeta del feed y del perfil) ---------- */
+
+.composer-trigger {
+  display: block;
+  width: 100%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.composer-trigger:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.composer-trigger__prompt {
+  display: block;
+  padding: var(--space-4);
+  color: var(--color-ink-soft);
+  font-size: var(--text-base);
+}
+
+/* ---------- Formulario ---------- */
+
+.composer-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.composer-form__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.composer-form__identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.composer-form__name {
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer-form__input {
+  width: 100%;
+  min-height: 5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  resize: none;
+  overflow-y: hidden;
+}
+
+.composer-form__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+.composer-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.composer-form__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+
+@media (min-width: 640px) {
+  .composer-form {
+    padding: var(--space-5);
+  }
+}
+
+@media (max-width: 639px) {
+  /* En celular el modal ocupa toda la pantalla, sin bordes redondeados */
+  .composer-modal {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .composer-modal__panel {
+    width: 100%;
+    max-height: none;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .composer-modal__header {
+    flex: none;
+    padding-top: max(var(--space-3), env(safe-area-inset-top, 0px));
+  }
+
+  /*
+   * El Publicar queda fijo al pie: con el teclado abierto el viewport
+   * se reduce (dvh) y el pie sigue visible sin salir de la pantalla.
+   */
+  .composer-form__footer {
+    position: sticky;
+    bottom: 0;
+    flex: none;
+    margin-top: auto;
+    padding-bottom: max(var(--space-3), env(safe-area-inset-bottom, 0px));
+    background-color: var(--color-surface);
+  }
+}

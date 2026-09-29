@@ -1,0 +1,110 @@
+﻿/* ---------- Notificaciones ---------- */
+
+.notifications-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.notifications-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.notifications-page__title {
+  margin: 0;
+  font-size: var(--text-2xl);
+}
+
+.notifications-page__more {
+  display: flex;
+  justify-content: center;
+}
+
+.notifications-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.notification.is-unread {
+  background-color: var(--color-accent-wash);
+}
+
+.notification__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.notification__link:hover {
+  background-color: var(--color-surface-muted);
+}
+
+.notification__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.notification__text {
+  font-size: var(--text-sm);
+  overflow-wrap: break-word;
+}
+
+.notification__time {
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
+}
+
+.notification__kind {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-muted);
+  color: var(--color-ink-soft);
+}
+
+.notification__kind--heart {
+  background-color: var(--color-danger-wash);
+  color: var(--color-danger);
+}
+
+.notification__kind--comment {
+  background-color: var(--color-accent-wash);
+  color: var(--color-accent);
+}
+
+.notification__kind--users,
+.notification__kind--check {
+  background-color: var(--color-success-wash);
+  color: var(--color-success);
+}
+
+.notifications-page,
+.friends-page {
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+}

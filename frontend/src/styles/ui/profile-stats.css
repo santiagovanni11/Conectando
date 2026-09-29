@@ -1,0 +1,100 @@
+/* ---------- Estadísticas del perfil ---------- */
+
+.profile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+}
+
+.profile-stats__item {
+  flex: 1;
+  min-width: 5.5rem;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+  text-align: center;
+}
+
+.profile-stats__label {
+  margin: 0;
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
+}
+
+.profile-stats__value {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+}
+
+/* ---------- Estadísticas clickeables ---------- */
+
+.profile-stats__item--action {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.profile-stats__item--action:hover {
+  background-color: var(--color-accent-wash);
+}
+
+/* ---------- Cuenta privada ---------- */
+
+.profile-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+  cursor: pointer;
+}
+
+.profile-privacy input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 2px;
+  accent-color: var(--color-accent);
+  flex: none;
+}
+
+.profile-privacy__title {
+  display: block;
+  font-weight: var(--weight-semibold);
+}
+
+.profile-privacy__hint {
+  display: block;
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+}
+
+.profile-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-8) var(--space-6);
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  color: var(--color-ink-soft);
+}
+
+.profile-locked__title {
+  margin: var(--space-2) 0 0;
+  color: var(--color-ink);
+  font-size: var(--text-lg);
+}
+
+.profile-locked__text {
+  margin: 0;
+  max-width: 24rem;
+}

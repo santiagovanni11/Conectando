@@ -1,0 +1,63 @@
+﻿/* ---------- Comments Section ---------- */
+
+.comments-section {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-4);
+}
+
+.comments-section__error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  margin: var(--space-2) 0;
+}
+
+.comments-section__loading,
+.comments-section__empty {
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  text-align: center;
+  padding: var(--space-3) 0;
+}
+
+.comments-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.comments-section__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Composer de respuesta, indentado bajo el comentario padre */
+.comments-section__reply {
+  margin-left: 1.75rem;
+  padding-left: var(--space-2);
+  border-left: 2px solid var(--color-border);
+}
+
+.comments-section__load-more {
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2);
+  margin-top: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.comments-section__load-more:hover:not(:disabled) {
+  background-color: var(--color-surface-muted);
+}
+
+.comments-section__load-more:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

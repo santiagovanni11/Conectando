@@ -1,0 +1,99 @@
+/* ---------- Modal genérico ---------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+/* El fondo oscurecido no se puede tocar: el toque tiene que cerrar, no
+   propagarse al contenido que queda debajo. */
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-overlay);
+}
+
+.modal__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(26rem, 100%);
+  /* 90dvh y no 90vh: en mobile el alto visible cambia al abrir el teclado
+     o la barra del navegador, y con vh el panel se sale de la pantalla. */
+  max-height: min(90dvh, 42rem);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  /* hidden y no auto: el scroll va en el cuerpo, para que la cabecera con
+     el botón de cerrar quede siempre visible. */
+  overflow: hidden;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  /* Sin esto, un cuerpo alto aplasta la cabecera hasta hacerla ilegible. */
+  flex-shrink: 0;
+}
+
+.modal__title {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+/* Todo lo que va dentro del modal usa esta clase: da aire y permite
+   desplazar cuando el contenido no entra, en vez de cortarlo. */
+.modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  overflow-y: auto;
+  /* En iOS el arrastre dentro del scroll va al body si no se marca. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 639px) {
+  .modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal__panel {
+    width: 100%;
+    /* En pantalla chica ocupa casi todo el alto: así el contenido largo
+       se desplaza en vez de quedar apretado contra el teclado. */
+    max-height: 92dvh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .modal__body {
+    padding: var(--space-4);
+    /* Se apila abajo: dos botones en fila en 320px quedan ilegibles. */
+    gap: var(--space-3);
+  }
+}
+
+/* En pantallas muy bajas en horizontal, el modal centrado se aprieta
+   demasiado: se ancla arriba y usa todo el alto. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .modal {
+    align-items: flex-start;
+  }
+
+  .modal__panel {
+    max-height: 100dvh;
+  }
+}

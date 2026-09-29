@@ -1,0 +1,108 @@
+/* ---------- Selector de cámara / fototeca ---------- */
+
+.photo-source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+.photo-source__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-size: var(--text-base);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.photo-source__option:hover {
+  background-color: var(--color-surface-muted);
+}
+
+.photo-source__label {
+  font-weight: var(--weight-medium);
+}
+
+/* ---------- Avatar clickeable (foto de perfil) ---------- */
+
+.avatar-picker {
+  position: relative;
+  display: inline-flex;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+}
+
+.avatar-picker__badge {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+  color: var(--color-surface);
+}
+
+.avatar-picker__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-overlay);
+  color: var(--color-surface);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.avatar-picker:hover .avatar-picker__overlay,
+.avatar-picker:focus-visible .avatar-picker__overlay {
+  opacity: 1;
+}
+
+.avatar-picker__hint {
+  margin: var(--space-2) 0 0;
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* ---------- Botón editar perfil ---------- */
+
+.profile-header__edit {
+  text-decoration: none;
+}
+
+.profile-header__edit-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.profile-header__edit:hover .profile-header__edit-text {
+  background-color: var(--color-border);
+}

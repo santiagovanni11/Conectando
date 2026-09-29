@@ -1,0 +1,42 @@
+/* ---------- Post de solo texto (estilo Facebook) ---------- */
+
+/*
+ * La tarjeta crece con el texto: sin recortes y sin line-clamp,
+ * asi se lee el post completo como en Facebook.
+ */
+.feed-grid__item--text {
+  aspect-ratio: auto;
+  min-height: 9rem;
+  background-color: var(--color-surface-muted);
+  border-color: var(--color-border);
+}
+
+.feed-grid__preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: var(--space-4);
+  background: transparent;
+  overflow: hidden;
+}
+
+.feed-grid__preview-text {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+@media (max-width: 639px) {
+  .feed-grid__preview {
+    padding: var(--space-3);
+  }
+
+  .feed-grid__preview-text {
+    font-size: var(--text-xs);
+  }
+}

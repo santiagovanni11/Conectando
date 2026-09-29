@@ -1,0 +1,65 @@
+﻿/* Mensajeria. */
+.conversation-page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 48rem;
+  margin: 0 auto;
+  background: var(--color-surface);
+}
+
+.conversation-page__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.conversation-page__back {
+  background: none;
+  border: none;
+  color: var(--color-accent-strong);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  padding: 0;
+}
+
+.conversation-page__title {
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+/* Boton de eliminar el chat. Va en tono de peligro porque el gesto borra. */
+.conversation-page__delete {
+  margin-left: auto;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--color-danger);
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3);
+  min-height: var(--tap-target);
+  cursor: pointer;
+}
+
+.conversation-page__delete:hover {
+  background-color: var(--color-danger-wash);
+}
+
+/* Indicador de "escribiendo…". Se reserva el alto para que el encabezado
+   no salte de línea cuando aparece y desaparece. */
+.conversation-page__typing {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-accent-strong);
+  min-height: 1rem;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.conversation-page__typing.is-active {
+  opacity: 1;
+}

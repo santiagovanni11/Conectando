@@ -1,0 +1,113 @@
+/* ---------- Actions ---------- */
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-4);
+}
+
+.post-actions__feedback {
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+/* ---------- Acciones sociales (like + comment) ---------- */
+
+.post-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.post-action:hover:not(:disabled) {
+  background-color: var(--color-accent-wash);
+}
+
+.post-action:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.post-action:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.post-action:disabled {
+  cursor: default;
+}
+
+.post-action--pending {
+  opacity: 0.6;
+}
+
+.post-action__number {
+  min-width: 1.25ch;
+  text-align: left;
+}
+
+/* Like: familia cálida (peligro) */
+.post-action--like:hover:not(:disabled),
+.post-action--like.post-action--active {
+  color: var(--color-danger);
+  background-color: var(--color-danger-wash);
+}
+
+/* Comment: familia de marca (acento) */
+.post-action--comment:hover:not(:disabled),
+.post-action--comment.post-action--active {
+  color: var(--color-accent-strong);
+  background-color: var(--color-accent-wash);
+}
+
+.post-action--active .post-action__icon {
+  animation: like-pop var(--duration-base) var(--ease-out);
+}
+
+/* El corazón se rellena cuando el like está activo */
+.post-action--like.post-action--active .post-action__icon {
+  fill: currentColor;
+}
+
+/* El marcador se rellena al guardar, como el corazón al dar me gusta. */
+.post-action--save .post-action__icon {
+  transition: fill var(--duration-fast) var(--ease-out);
+}
+
+.post-action--save.post-action--active .post-action__icon {
+  fill: currentColor;
+}
+
+.post-action--count:hover:not(:disabled) {
+  color: var(--color-danger);
+  text-decoration: underline;
+}
+
+@keyframes like-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-action,
+  .post-action--active .post-action__icon {
+    animation: none;
+    transition: none;
+  }
+}

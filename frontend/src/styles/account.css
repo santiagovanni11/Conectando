@@ -1,0 +1,75 @@
+/* Pestaña "Cuenta": cambio de contraseña y baja. */
+
+.account-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6, 1.5rem);
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  max-width: 28rem;
+  padding: var(--space-5, 1.25rem);
+  border: 1px solid var(--color-border, #e2e6ea);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface, #fff);
+}
+
+.account-form--danger {
+  border-color: var(--color-danger, #d64545);
+}
+
+.account-form__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.account-form__text {
+  margin: 0 0 var(--space-2, 0.5rem);
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #5b6770);
+}
+
+.account-form__error {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-danger, #d64545);
+}
+
+.account-form__ok {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-success, #2e7d4f);
+}
+
+.account-form__actions {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  justify-content: flex-end;
+}
+
+.account-danger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  align-items: flex-start;
+  max-width: 28rem;
+  padding: var(--space-5, 1.25rem);
+  border: 1px solid var(--color-border, #e2e6ea);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface, #fff);
+}
+
+.account-danger__title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--color-danger, #d64545);
+}
+
+.account-danger__text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #5b6770);
+}

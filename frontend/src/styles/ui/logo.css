@@ -1,0 +1,49 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  line-height: 1;
+}
+
+.logo__mark {
+  flex: none;
+  color: var(--color-accent);
+}
+
+.logo__mark-outline {
+  stroke: var(--color-ink) !important;
+}
+
+.logo__word {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.logo--sm .logo__mark {
+  width: 1.4rem;
+  height: auto;
+}
+
+.logo--sm .logo__word {
+  font-size: var(--text-lg);
+}
+
+.logo--md .logo__mark {
+  width: 1.9rem;
+  height: auto;
+}
+
+.logo--md .logo__word {
+  font-size: var(--text-xl);
+}
+
+.logo--lg .logo__mark {
+  width: 2.6rem;
+  height: auto;
+}
+
+.logo--lg .logo__word {
+  font-size: var(--text-2xl);
+}

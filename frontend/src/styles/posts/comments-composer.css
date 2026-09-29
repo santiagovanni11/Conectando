@@ -1,0 +1,140 @@
+/* ===== Composer profesional de comentarios ===== */
+
+.comment-composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.comment-composer--reply .comment-composer__box {
+  border-color: var(--color-accent);
+}
+
+.comment-composer__box {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  background: var(--color-surface);
+  transition: border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+  width: 100%;
+  max-width: 100%;
+}
+
+.comment-composer__box:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+}
+
+.comment-composer__avatar {
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+
+/* --- Textarea compacto que crece con el contenido --- */
+
+.comment-composer__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  resize: none;
+  font: inherit;
+  font-size: var(--text-base);
+  color: var(--color-ink);
+  line-height: 1.45;
+  min-height: 24px;
+  max-height: 180px;
+  padding: 0;
+  outline: none;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+}
+
+.comment-composer__input::placeholder {
+  color: var(--color-ink-faint);
+}
+
+.comment-composer__input:disabled {
+  opacity: 0.6;
+}
+
+/* --- Botón enviar integrado (círcular, parte del composer) --- */
+
+.comment-composer__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-accent);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+}
+
+.comment-composer__send:hover:not(:disabled) {
+  background-color: var(--color-accent-wash);
+}
+
+.comment-composer__send:active:not(:disabled) {
+  transform: scale(0.9);
+}
+
+.comment-composer__send:disabled {
+  opacity: 0.35;
+  cursor: default;
+  color: var(--color-ink-faint);
+}
+
+.comment-composer__send--loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* --- Contador (solo visible cerca del límite) --- */
+
+.comment-composer__counter {
+  margin: 0;
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+  text-align: right;
+  align-self: flex-end;
+  margin-top: var(--space-1);
+}
+
+.comment-composer__counter--limit {
+  color: var(--color-danger);
+  font-weight: var(--weight-semibold);
+}
+
+/* --- Estados --- */
+
+.comment-composer--empty .comment-composer__send {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.comment-composer--valid .comment-composer__send {
+  opacity: 1;
+}
+
+.comment-composer--error .comment-composer__counter {
+  color: var(--color-danger);
+  margin-top: var(--space-1);
+}

@@ -1,0 +1,49 @@
+﻿/* Mensajeria. */
+.message-composer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.message-composer__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.message-composer__input {
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--color-border);
+  border-radius: 1.5rem;
+  padding: 0.625rem 1rem;
+  font: inherit;
+  min-height: 2.75rem;
+  max-height: 8rem;
+}
+
+.message-composer__input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+.message-composer__send {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 1.5rem;
+  padding: 0.625rem 1.25rem;
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.message-composer__send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.message-composer__error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  margin: 0 0 0.5rem;
+}

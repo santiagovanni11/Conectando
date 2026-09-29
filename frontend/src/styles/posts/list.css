@@ -1,0 +1,10 @@
+.user-posts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.user-posts__more {
+  display: flex;
+  justify-content: center;
+}

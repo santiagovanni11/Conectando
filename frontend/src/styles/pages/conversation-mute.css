@@ -1,0 +1,41 @@
+﻿/* ---------- Silenciar conversacion ---------- */
+
+.conversation-mute {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.conversation-mute__button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.conversation-mute__button:hover {
+  background-color: var(--color-surface-muted);
+  color: var(--color-ink);
+}
+
+/* La barra diagonal marca el silencio sin depender solo del color: con
+   daltonismo, el tono por si solo no reacheria. */
+.conversation-mute__slash {
+  position: absolute;
+  width: 1.6rem;
+  height: 2px;
+  background-color: currentColor;
+  transform: rotate(-45deg);
+  border-radius: 1px;
+}
+
+.conversation-mute__error {
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+}

@@ -1,0 +1,35 @@
+@Conectando.Api_HostAddress = http://localhost:5025
+
+GET {{Conectando.Api_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+POST {{Conectando.Api_HostAddress}}/api/auth/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "userName": "miusuario",
+  "email": "miusuario@example.com",
+  "password": "Contrasena1"
+}
+
+###
+
+POST {{Conectando.Api_HostAddress}}/api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "miusuario@example.com",
+  "password": "Contrasena1"
+}
+
+###
+
+GET {{Conectando.Api_HostAddress}}/api/auth/me
+Authorization: Bearer <colocar-token-aqui>
+Accept: application/json
+
+###

@@ -1,0 +1,102 @@
+/* ---------- Gallery (carrusel) ---------- */
+
+.post-gallery {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-surface-muted);
+}
+
+.post-gallery__track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.post-gallery__item {
+  flex: 0 0 100%;
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+  scroll-snap-align: center;
+  background-color: var(--color-surface-muted);
+  user-select: none;
+}
+
+/* Oculta la barra de scroll horizontal */
+.post-gallery__track {
+  scrollbar-width: none;
+}
+
+.post-gallery__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Flechas (solo desktop) ---------- */
+
+.post-gallery__arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.post-gallery__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.post-gallery__arrow--prev {
+  left: var(--space-3);
+}
+
+.post-gallery__arrow--next {
+  right: var(--space-3);
+}
+
+/* ---------- Puntos ---------- */
+
+.post-gallery__dots {
+  position: absolute;
+  bottom: var(--space-3);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.post-gallery__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-ink-faint);
+  cursor: pointer;
+}
+
+.post-gallery__dot.is-active {
+  width: 1.25rem;
+  background-color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-gallery__track {
+    scroll-behavior: auto;
+  }
+}

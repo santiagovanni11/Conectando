@@ -1,0 +1,42 @@
+﻿/* ---------- Acciones de seguridad sobre otro usuario ---------- */
+
+/* Bloquear y denunciar viven bajo el perfil, pero no son publicaciones:
+   son acciones de seguridad. El aire y el scroll ya los da .modal__body,
+   asi que aca solo se ajusta el contenido. */
+.safety-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+/* ---------- Botones de un dialogo de confirmacion ---------- */
+
+/* Compartido por el modal de bloqueo y el de denuncia: los dos necesitan
+   mucho mas de ancho que de alto, asi que en mobile se apilan a lo ancho
+   para que "Cancelar" y la accion destructiva no queden al lado y se
+   toquen sin querer. */
+.dialog-actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-2);
+}
+
+.dialog-actions .btn {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  /* En pantalla ancha vuelven a la fila: hay ancho de sobra. */
+  .dialog-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .dialog-actions .btn {
+    width: auto;
+  }
+}

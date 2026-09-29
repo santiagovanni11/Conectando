@@ -1,0 +1,49 @@
+
+/* ---------- Modal de conexiones ---------- */
+
+.connections-modal .user-card-list {
+  overflow-y: auto;
+}
+
+.connections-modal .user-card:first-child {
+  border-radius: 0;
+}
+
+.connections-modal .user-card:last-child {
+  border-radius: 0;
+}
+
+.connections-modal__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.connections-modal__count {
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+}
+
+.connections-modal__refresh {
+  min-height: 2rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.connections-modal__refresh:hover:not(:disabled) {
+  background-color: var(--color-surface-muted);
+}
+
+.connections-modal__refresh:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

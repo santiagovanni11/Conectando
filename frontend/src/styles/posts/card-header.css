@@ -1,0 +1,37 @@
+﻿/* ---------- Encabezado del post ---------- */
+
+.post-card__identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nombre del autor: lleva a su perfil, como en Facebook */
+.post-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.post-card__author:hover .post-card__name {
+  text-decoration: underline;
+}
+
+.post-card__name {
+  margin: 0;
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-card__sub {
+  margin: 0;
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+}

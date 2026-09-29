@@ -1,0 +1,91 @@
+/* ---------- Grilla de posts (feed y perfil) ---------- */
+
+/*
+ * Grilla tipo masonry.
+ *
+ * No se usa `display: grid` porque los items se estiran a la altura de
+ * la fila: un post de texto (3/4) terminaria haciendo cuadrada tambien
+ * a la foto (1/1). Con `column` cada tarjeta conserva su proporcion,
+ * que es lo que hace Facebook e Instagram.
+ */
+
+.feed-grid {
+  column-count: 2;
+  column-gap: var(--space-2);
+}
+
+.feed-grid__item {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-bottom: var(--space-2);
+  break-inside: avoid;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+  color: var(--color-ink);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.feed-grid__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.feed-grid__badge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  border-radius: var(--radius-pill);
+  background-color: rgba(43, 33, 24, 0.6);
+  color: var(--color-surface);
+  pointer-events: none;
+}
+
+.feed-grid__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  background-color: var(--color-overlay);
+  color: var(--color-surface);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.feed-grid__item:hover .feed-grid__overlay,
+.feed-grid__item:focus-visible .feed-grid__overlay {
+  opacity: 1;
+}
+
+.feed-grid__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+@media (min-width: 640px) {
+  .feed-grid {
+    column-count: 3;
+    column-gap: var(--space-3);
+  }
+
+  .feed-grid__item {
+    margin-bottom: var(--space-3);
+  }
+}

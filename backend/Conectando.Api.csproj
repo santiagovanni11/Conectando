@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- El build del frontend se puede saltear con /p:SkipFrontendBuild=true -->
+    <SkipFrontendBuild Condition="'$(SkipFrontendBuild)' == ''">false</SkipFrontendBuild>
+  </PropertyGroup>
+
+  <!--
+    Compila el frontend y copia el resultado a wwwroot para que el backend
+    lo sirva en el mismo origen. Así la API, el WebSocket y la app comparten
+    dominio: sin CORS ni otro origen para el socket.
+
+    El código del frontend NUNCA se versiona en backend/wwwroot: es un
+    artefacto de build.
+  -->
+  <Target Name="BuildFrontend" BeforeTargets="Build" Condition="'$(SkipFrontendBuild)' != 'true'">
+    <PropertyGroup>
+      <FrontendDir>$(MSBuildThisFileDirectory)..\frontend\</FrontendDir>
+      <FrontendDist>$(FrontendDir)dist\</FrontendDist>
+      <FrontendStaging>$(IntermediateOutputPath)frontend\</FrontendStaging>
+    </PropertyGroup>
+
+    <Exec Command="npm run build" WorkingDirectory="$(FrontendDir)" />
+
+    <ItemGroup>
+      <FrontendAsset Include="$(FrontendDist)**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(FrontendAsset)"
+          DestinationFiles="@(FrontendAsset->'$(FrontendStaging)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+
+    <ItemGroup>
+      <WwwRootAsset Include="$(FrontendStaging)**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(WwwRootAsset)"
+          DestinationFiles="@(WwwRootAsset->'wwwroot\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.29.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+  </ItemGroup>
+
+</Project>

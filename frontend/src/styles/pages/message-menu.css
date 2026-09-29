@@ -1,0 +1,81 @@
+﻿/*
+ * Menu contextual de la burbuja.
+ *
+ * El botón queda siempre visible pero discreto: si se escondiera hasta
+ * el hover, en pantallas táctiles —donde no existe hover— no se vería
+ * nunca, y no habría forma de editar o eliminar.
+ */
+.message-menu {
+  position: absolute;
+  top: 0;
+  right: -0.25rem;
+}
+
+/* En los mensajes propios la burbuja va a la derecha, así que el menu
+   se ubica al lado contrario para no quedar tapado. */
+.message-thread__item:has(.is-own) .message-menu {
+  right: auto;
+  left: -0.25rem;
+}
+
+.message-menu__trigger {
+  display: grid;
+  place-items: center;
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  border: 0;
+  background: none;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.message-menu__trigger:hover,
+.message-menu__trigger:focus-visible {
+  background-color: var(--color-accent-wash);
+  color: var(--color-accent-strong);
+}
+
+.message-menu__popover {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  z-index: var(--z-tooltip);
+  min-width: 9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.message-menu__item {
+  display: block;
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.message-menu__item + .message-menu__item {
+  border-top: 1px solid var(--color-border);
+}
+
+.message-menu__item:hover {
+  background-color: var(--color-accent-wash);
+}
+
+.message-menu__item--danger {
+  color: var(--color-danger);
+}
+
+/* ---------- Edicion en linea ---------- */
+
