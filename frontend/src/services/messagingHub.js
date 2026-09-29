@@ -8,6 +8,22 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
  */
 let connection = null
 let startingConnection = null
+const reconnectedHandlers = new Set()
+
+/**
+ * Avisa cuando la conexión se rehizo sola, para que cada chat vuelva a entrar
+ * a su grupo.
+ *
+ * La pertenencia a un grupo vive dentro de la conexión, no en el usuario. Si
+ * SignalR reconecta, del otro lado hay una conexión nueva, sin ningún grupo:
+ * el chat sigue abierto en pantalla pero ya no le llega nada, y el único modo
+ * de recuperarlo es recargar. En desarrollo casi no se nota porque el servidor
+ * no se cae; en la nube, que apaga el servicio a los 15 minutos, pasa siempre.
+ */
+export function onReconnected(handler) {
+  reconnectedHandlers.add(handler)
+  return () => reconnectedHandlers.delete(handler)
+}
 
 function getToken() {
   return localStorage.getItem(TOKEN_STORAGE_KEY)
@@ -21,6 +37,12 @@ export function getHubConnection() {
 
   connection.onreconnecting(() => {
     // SignalR reconecta solo; esto solo informa el estado.
+  })
+
+  connection.onreconnected(() => {
+    for (const handler of reconnectedHandlers) {
+      handler()
+    }
   })
 
   return connection

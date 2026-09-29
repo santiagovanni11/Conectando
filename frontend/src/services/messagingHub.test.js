@@ -11,6 +11,7 @@ vi.mock('@microsoft/signalr', () => ({
       return {
         state: 'Disconnected',
         onreconnecting: vi.fn(),
+        onreconnected: vi.fn(),
         on: vi.fn(),
         off: vi.fn(),
         invoke: vi.fn().mockResolvedValue(undefined),

@@ -4,6 +4,7 @@ import { useConversationHub } from './useConversationHub'
 import { useMessageActions } from './useMessageActions'
 import { useMessageHub } from './useMessageHub'
 import { useMessagePaging } from './useMessagePaging'
+import { useRejoinOnReconnect } from './useRejoinOnReconnect'
 import { useSeenSync } from './useSeenSync'
 
 /**
@@ -66,6 +67,8 @@ export function useConversationMessages(conversationId, currentUserId = null) {
 
     return () => leaveConversation(conversationId)
   }, [conversationId, joinConversation, leaveConversation, markRead])
+
+  useRejoinOnReconnect(conversationId, joinConversation)
 
   useMessageHub({
     onMessage: (message) => {
