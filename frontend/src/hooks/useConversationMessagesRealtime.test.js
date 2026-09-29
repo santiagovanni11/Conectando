@@ -63,20 +63,33 @@ describe('useConversationMessages: cambios del otro en vivo', () => {
     expect(result.current.messages[0].content).toBe('hola original')
   })
 
-  it('no duplica el mensaje propio que vuelve por el hub', async () => {
-    // La difusión llega al grupo entero. Si el emisor no lo descarta, su
-    // propio mensaje aparecería dos veces en el hilo.
+  it('agrega el mensaje propio que vuelve por el hub, sin duplicarlo', async () => {
+    // El emisor tambien necesita verlo: nadie lo suma a la lista por otro
+    // lado, asi que descartarlo lo dejaba invisible hasta recargar el chat.
+    // Lo que evita el duplicado no es descartarlo, sino que applyIncoming
+    // ignore los ids repetidos.
     const { result } = mount()
     await waitFor(() => expect(result.current.messages).toHaveLength(1))
 
-    act(() => {
-      hubHandlers.current.onMessage(
-        message({ id: 'm2', content: 'hola', sender: { id: 'user-1', displayName: 'Yo' } }),
-      )
+    const propio = message({
+      id: 'm2',
+      content: 'hola',
+      sender: { id: 'user-1', displayName: 'Yo' },
     })
 
-    expect(result.current.messages).toHaveLength(1)
+    act(() => {
+      hubHandlers.current.onMessage(propio)
+    })
+
+    expect(result.current.messages).toHaveLength(2)
+
+    act(() => {
+      hubHandlers.current.onMessage(propio)
+    })
+
+    expect(result.current.messages).toHaveLength(2)
   })
+
 
   it('sí agrega el mensaje que envía el otro', async () => {
     const { result } = mount()

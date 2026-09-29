@@ -72,7 +72,10 @@ export function useConversationMessages(conversationId, currentUserId = null) {
       if (message.conversationId !== conversationId) return
       // El emisor ya lo tiene en pantalla: si no se descarta, al cambiar
       // la difusion a todo el grupo aparecia duplicado.
-      if (message.sender?.id === currentUserId) return
+      // No se descarta el del emisor: el servidor difunde a todo el grupo
+      // para que los dos lados vean lo mismo, y el emisor no tiene otra via
+      // para enterarse. applyIncoming ignora ids repetidos, asi que no queda
+      // duplicado ni cuando el mensaje vuelve por el REST.
       applyIncoming(message)
     },
     onSeen: (payload) => {
@@ -102,7 +105,7 @@ export function useConversationMessages(conversationId, currentUserId = null) {
     actionError,
     loadMore,
     reload,
-    send: (content) => sendThrough(conversationId, content, sendViaHub, setSendError),
+    send: (content) => sendThrough(conversationId, content, sendViaHub, applyIncoming, setSendError),
     edit,
     remove,
   }
@@ -117,13 +120,16 @@ export function useConversationMessages(conversationId, currentUserId = null) {
  * avisa los fallos, sube la excepcion, y por eso `sendViaHub` devuelve
  * false y el REST es quien tira con el mensaje de verdad.
  */
-async function sendThrough(conversationId, content, sendViaHub, onError) {
+async function sendThrough(conversationId, content, sendViaHub, applyIncoming, onError) {
   const trimmed = content?.trim() ?? ''
   if (!trimmed) return
 
   try {
     if (!(await sendViaHub(conversationId, trimmed))) {
-      await sendMessage(conversationId, trimmed)
+      // Cuando va por REST no hay difusion en vivo para quien envia, asi que
+      // el mensaje guardado se suma a la lista aca. Sin esto aparecia recien
+      // al recargar el chat, que es lo que hace pensar que el envio tarda.
+      applyIncoming(await sendMessage(conversationId, trimmed))
     }
     onError('')
   } catch (cause) {
