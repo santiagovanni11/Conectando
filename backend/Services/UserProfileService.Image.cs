@@ -35,6 +35,9 @@ public partial class UserProfileService
         user.ProfileImageUrl = stored.Url;
         user.ProfileImagePublicId = stored.PublicId;
         user.ProfileImageSizeBytes = file.Length;
+        // Una foto nueva arranca centrada: el encuadre anterior estaba
+        // calculado sobre otra imagen y dejaría esta corrida.
+        user.ResetAvatarFraming();
         user.UpdatedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);

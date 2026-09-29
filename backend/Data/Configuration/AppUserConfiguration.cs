@@ -42,6 +42,9 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         builder.Property(u => u.ProfileImageSizeBytes)
             .HasDefaultValue(0L);
 
+        builder.Property(u => u.ProfileImageZoom)
+            .HasDefaultValue(1.0);
+
         builder.Property(u => u.CreatedAt);
 
         builder.Property(u => u.UpdatedAt);

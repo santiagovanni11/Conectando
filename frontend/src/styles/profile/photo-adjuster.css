@@ -1,0 +1,86 @@
+/**
+ * El ajustador de la foto de perfil.
+ *
+ * La grilla de arriba es la misma regla de tercios que usan los editores de
+ * foto: sirve para decidir dónde queda la cara.
+ */
+
+.adjuster {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 80%);
+}
+
+.adjuster__title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.adjuster__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgb(255 255 255 / 70%);
+}
+
+.adjuster__frame {
+  position: relative;
+  width: 320px;
+  max-width: 82vw;
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  background: #111;
+  border-radius: 50%;
+}
+
+.adjuster__frame:active {
+  cursor: grabbing;
+}
+
+.adjuster__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Sin esto, la imagen se ve un instante "cruda" mientras el navegador
+     aplica el recorte de Cloudinary. */
+  opacity: 0.92;
+  transition: opacity 150ms ease;
+}
+
+.adjuster__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 35%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 35%) 1px, transparent 1px);
+  background-size: 33.33% 33.33%;
+  background-position: 33.33% 33.33%;
+}
+
+.adjuster__zoom {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 320px;
+  max-width: 82vw;
+}
+
+.adjuster__zoom input {
+  flex: 1;
+  accent-color: #fff;
+}
+
+.adjuster__actions {
+  display: flex;
+  gap: 10px;
+}

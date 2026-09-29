@@ -20,6 +20,33 @@ public class AppUser
 
     /// <summary> Peso del avatar, para que entre en la cuenta de espacio.</summary>
     public long ProfileImageSizeBytes { get; set; }
+
+    /// <summary>
+    /// Encuadre del avatar, en.decimales de la imagen original.
+    /// </summary>
+    /// <remarks>
+    /// No se recorta la imagen: se guarda dónde mirar y Cloudinary aplica el
+    /// recorte al mostrarla. Así "ajustar" es instantáneo, se puede repetir
+    /// las veces que haga falta sin volver a subir nada, y la foto original
+    /// queda intacta por si un día se quiere mostrar entera.
+    /// Zoom 1 es sin acercar; 2 es el doble de cerca.
+    /// </remarks>
+    public double ProfileImageZoom { get; set; } = 1;
+
+    /// <summary>Desplazamiento horizontal del recorte, en píxeles de la original.</summary>
+    public int ProfileImageOffsetX { get; set; }
+
+    /// <summary>Desplazamiento vertical del recorte, en píxeles de la original.</summary>
+    public int ProfileImageOffsetY { get; set; }
+
+    /// <summary>Vuelve el avatar al encuadre de siempre, sin acercar y centrado.</summary>
+    public void ResetAvatarFraming()
+    {
+        ProfileImageZoom = 1;
+        ProfileImageOffsetX = 0;
+        ProfileImageOffsetY = 0;
+    }
+
     /// <summary>Si es true, solo sus amigos ven sus publicaciones y sus listas.</summary>
     public bool IsPrivate { get; set; }
     public DateTime CreatedAt { get; set; }

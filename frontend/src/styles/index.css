@@ -16,6 +16,8 @@
 @import './navigation.css';
 @import './layout.css';
 @import './profile.css';
+@import './profile/profile-avatar.css';
+@import './profile/photo-adjuster.css';
 @import './account.css';
 @import './social.css';
 @import './posts/saved-posts.css';

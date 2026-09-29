@@ -1,0 +1,100 @@
+/**
+ * El avatar del perfil propio y las acciones para cambiarlo.
+ *
+ * El menú no está dentro de la foto sino debajo, en el flujo normal: si se
+ * superpusiera, taparía justo la imagen que se está por cambiar.
+ */
+
+.profile-avatar {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  /* Sin esto, la pulsación larga en móvil dispara el menú del sistema
+     (seleccionar, guardar) en vez del de la app. */
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.profile-avatar--pressing .profile-avatar__hit {
+  transform: scale(0.97);
+}
+
+.profile-avatar__hit {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.profile-avatar__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-on-dark, #fff);
+  background: rgb(0 0 0 / 45%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+/* Con el mouse el ícono aparece siempre; en táctil, al tocar. Un poco de
+   descubrimiento sin tapar la foto de por sí. */
+@media (hover: hover) {
+  .profile-avatar__hit:hover .profile-avatar__overlay,
+  .profile-avatar__hit:focus-visible .profile-avatar__overlay {
+    opacity: 1;
+  }
+}
+
+.profile-avatar__status {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  color: var(--color-ink-invert, #fff);
+  background: var(--color-ink, #111);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.avatar-actions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  margin-top: 6px;
+  padding: 4px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-line, #e5e5e5);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+.avatar-actions__item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm, 6px);
+}
+
+.avatar-actions__item:hover {
+  background: var(--color-surface-alt, #f5f5f5);
+}

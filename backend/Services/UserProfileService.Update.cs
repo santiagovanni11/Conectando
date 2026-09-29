@@ -38,6 +38,15 @@ public partial class UserProfileService
         {
             user.ProfileImagePublicId = null;
             user.ProfileImageSizeBytes = 0;
+            // El encuadre era de la foto anterior: con una imagen nueva no
+            // significa nada y dejaría la foto corrida.
+            user.ResetAvatarFraming();
+        }
+        else
+        {
+            // Null significa "no lo toqué". Sin este if, guardar la
+            // biografía volvería el avatar al centro.
+            ApplyAvatarFraming(user, request);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -61,10 +70,30 @@ public partial class UserProfileService
         Email = user.Email,
         Bio = user.Bio,
         ProfileImageUrl = user.ProfileImageUrl,
+        ProfileImageZoom = user.ProfileImageZoom,
+        ProfileImageOffsetX = user.ProfileImageOffsetX,
+        ProfileImageOffsetY = user.ProfileImageOffsetY,
         IsPrivate = user.IsPrivate,
         CreatedAt = user.CreatedAt,
         UpdatedAt = user.UpdatedAt,
     };
+
+    /// <summary>
+    /// Aplica el encuadre que venga completo. Los tres campos van juntos: si
+    /// llega uno solo, se deja el encuadre como estaba en vez de mezclar un
+    /// desplazamiento nuevo con un acercamiento viejo.
+    /// </summary>
+    private static void ApplyAvatarFraming(AppUser user, UpdateProfileRequest request)
+    {
+        if (request.ProfileImageZoom is null || request.ProfileImageOffsetX is null || request.ProfileImageOffsetY is null)
+        {
+            return;
+        }
+
+        user.ProfileImageZoom = request.ProfileImageZoom.Value;
+        user.ProfileImageOffsetX = request.ProfileImageOffsetX.Value;
+        user.ProfileImageOffsetY = request.ProfileImageOffsetY.Value;
+    }
 
     private static string? ToNullOrTrimmed(string? value)
     {
