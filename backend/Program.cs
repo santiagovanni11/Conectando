@@ -51,7 +51,13 @@ if (app.Environment.IsDevelopment())
     app.UseCors(ServiceCollectionExtensions.DevCorsPolicy);
 }
 
-app.UseHttpsRedirection();
+// Solo en desarrollo: Render ya redirige http a https antes de que la
+// peticion llegue aca, asi que en produccion este middleware busca un puerto
+// HTTPS que no existe y avisa. El aviso era ruido, no un error.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
