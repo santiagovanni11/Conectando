@@ -14,10 +14,12 @@ namespace Conectando.Api.Controllers;
 [Authorize]
 public class ConversationsController(
     IConversationService conversationService,
-    INavCountService navCountService) : ControllerBase
+    INavCountService navCountService,
+    INavCountsBroadcaster navCounts) : ControllerBase
 {
     private readonly IConversationService _conversationService = conversationService;
     private readonly INavCountService _navCountService = navCountService;
+    private readonly INavCountsBroadcaster _navCounts = navCounts;
 
     /// <summary>Contadores de aviso para los íconos de la navegación.</summary>
     [HttpGet("nav-counts")]
@@ -65,8 +67,13 @@ public class ConversationsController(
         SendMessageRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _conversationService.SendMessageAsync(
-            User.GetUserId(), id, request.Content, cancellationToken);
+        var userId = User.GetUserId();
+        var result = await _conversationService.SendMessageAsync(userId, id, request.Content, cancellationToken);
+
+        // Mismo motivo que en "marcar leido": el front manda por REST cuando
+        // Mismo motivo que en "marcar leido": el front manda por REST cuando
+        var peerIds = await _conversationService.GetPeerIdsAsync(id, userId);
+        await _navCounts.NotifyManyAsync(peerIds.Append(userId), cancellationToken);
 
         return Ok(result);
     }
@@ -74,7 +81,13 @@ public class ConversationsController(
     [HttpPost("{id:guid}/read")]
     public async Task<IActionResult> MarkAsRead(Guid id, CancellationToken cancellationToken)
     {
-        await _conversationService.MarkAsReadAsync(User.GetUserId(), id, cancellationToken);
+        var userId = User.GetUserId();
+        await _conversationService.MarkAsReadAsync(userId, id, cancellationToken);
+
+        // El hub lo hace cuando el marcado es por ahí, pero el front lo manda
+        // por REST cuando el hub no está. Sin esto, abrir el chat esperando
+        // un número que nunca baja.
+        await _navCounts.NotifyAsync(userId, cancellationToken);
         return NoContent();
     }
 

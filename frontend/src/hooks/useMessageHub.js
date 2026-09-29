@@ -1,8 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
-import { startHubConnection } from '../services/messagingHub'
+import { onHubEvent, startHubConnection } from '../services/messagingHub'
+
+/** Evento del hub -> nombre del callback que recibe los datos. */
+const EVENTOS = {
+  Connected: 'onConnected',
+  MessageReceived: 'onMessage',
+  JoinedConversation: 'onJoined',
+  MessageSeen: 'onSeen',
+  MessageUpdated: 'onUpdated',
+  MessageDeleted: 'onDeleted',
+  NavCountsChanged: 'onNavCounts',
+}
 
 /**
  * Escucha los eventos del hub mientras el componente esté montado.
+ *
+ * No se engancha a la conexión directamente: usa el registro de
+ * `messagingHub`, que se encarga de volver a enganchar todo cuando la
+ * conexión se rehace. Si cada componente se enganchara por su cuenta, un
+ * evento registrado antes de un reconexión se quedaría escuchando a la
+ * conexión muerta y dejaría de llegar sin avisar.
+ *
+ * No hay evento de error a propósito: el hub deja subir la excepción, y eso
+ * es lo que hace que invoke() rechace y el front sepa que la operación falló
+ * en vez de creer que salió bien.
+ *
  * @param {object} handlers - callbacks para cada evento del hub.
  * @returns {{ isConnected: boolean }}
  */
@@ -17,53 +39,17 @@ export function useMessageHub(handlers) {
   })
 
   useEffect(() => {
-    let cancelled = false
-    let active = null
-    const registered = []
+    // Un solo evento de la conexión: si se usa, el botón de "visto" y la
+    // lista de conversaciones se enteran. Para eso existe startHubConnection.
+    startHubConnection()
+      .then((connection) => setIsConnected(connection?.state === 'Connected'))
+      .catch(() => {})
 
-    const register = async () => {
-      const connection = await startHubConnection()
-      if (!connection || cancelled) return
-      active = connection
+    const bajas = Object.entries(EVENTOS).map(([evento, callback]) =>
+      onHubEvent(evento, (data) => handlersRef.current?.[callback]?.(data)),
+    )
 
-      const events = {
-        Connected: () => setIsConnected(true),
-        MessageReceived: (message) => handlersRef.current?.onMessage?.(message),
-        JoinedConversation: (data) => handlersRef.current?.onJoined?.(data),
-        MessageSeen: (data) => handlersRef.current?.onSeen?.(data),
-        // Edición y borrado llegan con el mensaje ya actualizado por el
-        // servidor, así que el front solo lo reemplaza en la lista.
-        // No hay evento de error a propósito: el hub deja subir la
-        // excepción, y eso es lo que hace que invoke() rechace y el front
-        // sepa que la operación falló en vez de creer que salió bien.
-        MessageUpdated: (message) => handlersRef.current?.onUpdated?.(message),
-        MessageDeleted: (message) => handlersRef.current?.onDeleted?.(message),
-        // Los contadores de la barra llegan con los números ya calculados. Por
-        // eso no hay callback de "refrescá": si el cliente tuviera que volver
-        // a preguntar, el número aparecería después de dos viajes, y eso es lo
-        // que lo hace parecer lento.
-        NavCountsChanged: (data) => handlersRef.current?.onNavCounts?.(data),
-      }
-
-      for (const [name, handler] of Object.entries(events)) {
-        connection.on(name, handler)
-        registered.push([name, handler])
-      }
-
-      setIsConnected(connection.state === 'Connected')
-    }
-
-    // Si el hub no conecta, la app sigue funcionando con el REST.
-    register().catch(() => {})
-
-    return () => {
-      cancelled = true
-      // Sin esto los handlers se acumulan: al abrir otra conversación
-      // el mensaje nuevo llegaría a listeners de pantallas viejas.
-      for (const [name, handler] of registered) {
-        active?.off?.(name, handler)
-      }
-    }
+    return () => bajas.forEach((baja) => baja())
   }, [])
 
   return { isConnected }
