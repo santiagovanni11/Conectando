@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 using Conectando.Api.DTOs.Previews;
 using Conectando.Api.Interfaces;
@@ -53,10 +54,16 @@ public sealed class SpaMetadataMiddleware(RequestDelegate next, ILogger<SpaMetad
         await WriteAsync(context, html);
     }
 
-    private static bool ShouldHandle(HttpRequest request) =>
+    // Visible para los tests: decide qué rutas se sirven con metadatos y cuáles
+    // dejan pasar, y esa decisión no necesita disco ni base para probarse.
+    internal static bool ShouldHandle(HttpRequest request) =>
         HttpMethods.IsGet(request.Method)
         && !request.Path.StartsWithSegments("/api")
-        && !request.Path.StartsWithSegments("/hubs");
+        && !request.Path.StartsWithSegments("/hubs")
+        // Cualquier cosa con extensión es un archivo, no una página. Sin esto
+        // el navegador pide /assets/app.js y recibe el index.html, que es
+        // JavaScript inválido: la app queda en blanco.
+        && !Path.HasExtension(request.Path);
 
     private async Task WriteAsync(HttpContext context, string html)
     {

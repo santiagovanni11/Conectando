@@ -43,6 +43,12 @@
   </Target>
 
   <ItemGroup>
+    <!-- Los tests alcanzan la lógica interna del middleware de Open Graph,
+         que decide rutas y no necesita base ni disco para probarse. -->
+    <InternalsVisibleTo Include="Conectando.Api.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.29.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
