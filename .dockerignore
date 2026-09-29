@@ -1,0 +1,26 @@
+# Lo que no debe entrar en la imagen. Cuanto más grande es el contexto
+# que se manda al build, más lento arranca.
+
+# Dependencias: se reinstalan adentro. Copiarlas además rompe Linux.
+**/node_modules
+
+# Resultados de compilación: se generan adentro. Copiar los de la máquina
+# mezcla binarios de Windows con el build de Linux.
+**/bin
+**/obj
+**/dist
+
+# El frontend compilado lo produce la etapa de Node del Dockerfile.
+backend/wwwroot
+
+# VCS y editores
+.git
+**/.vs
+**/.idea
+**/*.user
+
+# Secretos. Ni en un build de prueba entran: en producción llegan por
+# variables de entorno, que Render guarda cifradas fuera del repositorio.
+**/.env
+**/.env.local
+**/appsettings.Production.json

@@ -1,0 +1,55 @@
+# Deploy de Conectando.
+#
+# Este archivo declara el servicio completo: qué se construye, con qué
+# variables y cómo se comprueba que está vivo. Render lo lee solo al crear
+# el servicio, así que la infraestructura queda versionada junto al código
+# en lugar de vivir en clicks dentro de un panel.
+#
+# Los valores marcados "sync: false" no van acá: son secretos, o dependen
+# del dominio que Render todavía no asignó. Render los pide al crear el
+# servicio y quedan guardados cifrados.
+
+services:
+  - type: web
+    name: conectando
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    # El endpoint existe solo para esto: responde sin tocar la base, así que
+    # un deploy lento de la base no se confunde con una app sana.
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+      # Neon, rama production, base neondb, con pooling. Sin esto la app
+      # no encuentra la base y no arranca.
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+
+      # Firma de los tokens. Render genera una aleatoria y la muestra una
+      # sola vez: esa debe quedar guardada, porque cambiarla cierra todas
+      # las sesiones abiertas.
+      - key: JwtSettings__Secret
+        generateValue: true
+
+      # El dominio real, para los links que se comparten por WhatsApp o
+      # Slack. Render lo pide después de crearse el servicio.
+      - key: Site__Url
+        sync: false
+
+      # Cloudinary: sin esto, subir una foto responde 503.
+      - key: Cloudinary__CloudName
+        sync: false
+      - key: Cloudinary__ApiKey
+        sync: false
+      - key: Cloudinary__ApiSecret
+        sync: false
+
+      # Tope de espacio por usuario. No hace falta definirlo: el código
+      # tiene 200 MB por defecto. Está acá para que subirlo sea cambiar
+      # una línea y redeployar, sin tocar código.
+      - key: StorageQuota__MaxBytesPerUser
+        value: "209715200"
