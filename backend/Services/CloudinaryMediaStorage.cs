@@ -9,9 +9,11 @@ namespace Conectando.Api.Services;
 public class CloudinaryMediaStorage : IMediaStorage
 {
     private readonly Cloudinary? _cloudinary;
+    private readonly ILogger<CloudinaryMediaStorage> _logger;
 
-    public CloudinaryMediaStorage(IConfiguration configuration)
+    public CloudinaryMediaStorage(IConfiguration configuration, ILogger<CloudinaryMediaStorage> logger)
     {
+        _logger = logger;
         var settings = configuration.GetSection(CloudinarySettings.SectionName).Get<CloudinarySettings>();
         if (settings is not null && settings.IsConfigured)
         {
@@ -37,6 +39,15 @@ public class CloudinaryMediaStorage : IMediaStorage
         var result = await _cloudinary.UploadAsync(parameters, cancellationToken);
         if (result.Error is not null || result.SecureUrl is null)
         {
+            // Cloudinary sí dice por qué rechazó la subida, y ese motivo se
+            // estaba tirando a la basura. El único síntoma era un error
+            // genérico, sin forma de distinguir una clave mal puesta de una
+            // cuenta sin activar o un límite de la cuota.
+            _logger.LogError(
+                "Cloudinary rechazó la subida de {FileName}: {Message}",
+                fileName,
+                result.Error?.Message);
+
             throw new MediaStorageException();
         }
 
