@@ -95,6 +95,39 @@
   background-color: var(--color-accent);
 }
 
+/* ---------- Proporción ----------
+   Sin esto las fotos se ven chicas: 4/3 deja mucho aire arriba y
+   abajo, y en un feed la publicación parece vacía. 4/5 es la proporción que
+   usan las fotos de perfil y de portada en las apps de fotos: ocupa mucho más
+   alto sin alargar la publicación más de lo necesario.
+
+   El carrusel va en 1/1 porque son varias fotos y, si cada una fuera alta,
+   habría que deslizar muchísimo para verlas.
+ */
+
+.post-card--media .post-gallery__item {
+  aspect-ratio: 4 / 5;
+}
+
+.post-card--media .post-gallery.is-carousel .post-gallery__item {
+  aspect-ratio: 1 / 1;
+}
+
+/* En pantallas grandes hay margen de sobra: se aprovecha para que la foto sea
+   más grande de verdad, sin que el post quede de skinny en el centro. */
+@media (min-width: 900px) {
+  .post-card--media {
+    max-width: 42rem;
+    margin-inline: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .post-card--media .post-gallery {
+    border-radius: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .post-gallery__track {
     scroll-behavior: auto;

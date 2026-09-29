@@ -1,0 +1,56 @@
+/* ---------- Publicación con fotos ----------
+   La imagen es lo que se vino a ver, así que ocupa todo el ancho y es alta.
+   El resto —nombre, botones, pie— se achica y se pega a los bordes para no
+   competir con ella. Sin fotos, el texto manda y el post se lee compacto.
+
+   Va aparte de card.css porque son dos layouts distintos, no dos detalles de
+   estilo: si vivieran juntos, cada regla nueva de la foto tendría que
+   acordarse de dejar quieto al texto.
+ */
+
+/* ---------- Con fotos ---------- */
+
+.post-card--media {
+  /* Sin separación entre la foto y el borde: el marco se ve continuo. */
+  gap: 0;
+  border-radius: 0;
+  border-right: 0;
+  border-left: 0;
+}
+
+.post-card--media .post-card__header {
+  padding-bottom: var(--space-2);
+}
+
+.post-card--media .post-gallery {
+  border-radius: 0;
+}
+
+.post-card--media .post-card__content {
+  /* El texto va después de la foto, como pie de foto, no como protagonista. */
+  padding-top: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.post-card--media .post-card__meta {
+  padding-bottom: var(--space-3);
+}
+
+/* ---------- Solo texto ----------
+   Sin foto no hay nada grande que mostrar: se cierra todo y el post se lee
+   de un tirón, como en una línea de tiempo.
+ */
+
+.post-card--texto {
+  gap: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
+.post-card--texto .post-card__header {
+  padding-bottom: 0;
+}
+
+.post-card--texto .post-card__content {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed, 1.5);
+}

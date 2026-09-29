@@ -11,6 +11,7 @@ import { postService } from '../../services/postService'
 import { useSharePost } from '../../hooks/useSharePost'
 import { usePostLike } from '../../hooks/usePostLike'
 import { usePostSave } from '../../hooks/usePostSave'
+import { postVariant } from '../../utils/postVariant'
 
 export default function PostCard({ post, own = false, onEdited, onDeleted }) {
   const like = usePostLike(post)
@@ -23,6 +24,9 @@ export default function PostCard({ post, own = false, onEdited, onDeleted }) {
   const [showLikes, setShowLikes] = useState(false)
   // El conteo arranca en el post y se actualiza al comentar o borrar.
   const [commentsCount, setCommentsCount] = useState(post.commentsCount ?? 0)
+  // Con fotos la publicación se muestra de otra manera: la imagen manda y el
+  // resto se acomoda alrededor en vez de competir con ella.
+  const variant = postVariant(post)
 
   function handleCommentsChange(delta) {
     setCommentsCount((current) => Math.max(0, current + delta))
@@ -43,7 +47,7 @@ export default function PostCard({ post, own = false, onEdited, onDeleted }) {
   }
 
   return (
-    <article className="post-card">
+    <article className={`post-card post-card--${variant}`}>
       <PostCardHeader post={post} own={own} onEdit={() => setEditing(true)} onDelete={handleDelete} />
 
       <PostMediaGallery media={post.media} onDoubleClick={like.toggle} />

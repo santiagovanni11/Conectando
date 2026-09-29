@@ -31,6 +31,7 @@
 @import './posts/card.css';
 @import './posts/card-header.css';
 @import './posts/gallery.css';
+@import './posts/card-variants.css';
 @import './posts/actions.css';
 @import './posts/likes-modal.css';
 @import './posts/like-user.css';
