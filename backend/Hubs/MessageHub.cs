@@ -23,10 +23,12 @@ namespace Conectando.Api.Hubs;
 public class MessageHub(
     IConversationService conversationService,
     ConversationBroadcaster broadcaster,
+    INavCountsBroadcaster navCounts,
     ILogger<MessageHub> logger) : ConectandoHub(logger)
 {
     private readonly IConversationService _conversationService = conversationService;
     private readonly ConversationBroadcaster _broadcaster = broadcaster;
+    private readonly INavCountsBroadcaster _navCounts = navCounts;
 
     /// <summary>Deja de mandar eventos de una conversacion al salir de la vista.</summary>
     public Task LeaveConversation(Guid conversationId) =>
@@ -44,10 +46,20 @@ public class MessageHub(
     }
 
     /// <summary>Envia un mensaje y lo reenvia a los conectados en vivo.</summary>
+    /// <remarks>
+    /// Aparte de la difusión en la conversación, se avisa al otro por su
+    /// grupo personal. Sin esto, el número de mensajes sin leer solo se
+    /// actualiza al refrescar: un mensaje que llega con el chat cerrado queda
+    /// invisible hasta que se abre otra pestaña.
+    /// </remarks>
     public async Task SendMessage(Guid conversationId, string content)
     {
-        var message = await _conversationService.SendMessageAsync(GetUserId(), conversationId, content);
+        var userId = GetUserId();
+        var message = await _conversationService.SendMessageAsync(userId, conversationId, content);
         await _broadcaster.MessageReceivedAsync(conversationId, message);
+
+        var peerIds = await _conversationService.GetPeerIdsAsync(conversationId, userId);
+        await _navCounts.NotifyManyAsync(peerIds.Append(userId), Context.ConnectionAborted);
     }
 
     /// <summary>
@@ -93,6 +105,10 @@ public class MessageHub(
             ReaderId = userId,
             ReadAt = DateTime.UtcNow,
         }, peerIds);
+
+        // El número sin leer de quien lo acaba de marcar como leído tiene que
+        // bajar ahí mismo, no en el próximo refresco.
+        await _navCounts.NotifyAsync(userId, Context.ConnectionAborted);
     }
 
     /// <summary>

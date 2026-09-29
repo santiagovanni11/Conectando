@@ -38,6 +38,11 @@ export function useMessageHub(handlers) {
         // sepa que la operación falló en vez de creer que salió bien.
         MessageUpdated: (message) => handlersRef.current?.onUpdated?.(message),
         MessageDeleted: (message) => handlersRef.current?.onDeleted?.(message),
+        // Los contadores de la barra llegan con los números ya calculados. Por
+        // eso no hay callback de "refrescá": si el cliente tuviera que volver
+        // a preguntar, el número aparecería después de dos viajes, y eso es lo
+        // que lo hace parecer lento.
+        NavCountsChanged: (data) => handlersRef.current?.onNavCounts?.(data),
       }
 
       for (const [name, handler] of Object.entries(events)) {

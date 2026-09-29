@@ -21,7 +21,7 @@ namespace Conectando.Api.Tests;
 [Collection("Social")]
 public class MessageHubTests(SocialTestFixture fixture)
 {
-    private static (MessageHub Hub, FakeHubContext Context) CreateHub(
+    private static (MessageHub Hub, FakeHubContext Context, FakeNavCountsBroadcaster Nav) CreateHub(
         ConectandoDbContext db,
         Guid userId)
     {
@@ -29,16 +29,18 @@ public class MessageHubTests(SocialTestFixture fixture)
         var broadcaster = new ConversationBroadcaster(
             context,
             NullLogger<ConversationBroadcaster>.Instance);
+        var nav = new FakeNavCountsBroadcaster();
 
         var hub = new MessageHub(
             new ConversationService(db, new BlockService(db)),
             broadcaster,
+            nav,
             NullLogger<MessageHub>.Instance)
         {
             Context = new FakeHubCaller(userId),
         };
 
-        return (hub, context);
+        return (hub, context, nav);
     }
 
     private static string GroupOf(Guid conversationId) => $"conversation:{conversationId}";
@@ -50,7 +52,7 @@ public class MessageHubTests(SocialTestFixture fixture)
         var users = await TestUsers.SeedAsync(db, 2);
         var conversation = await ConversationTestData.SeedConversationAsync(db, users[0].Id, users[1].Id);
         var message = await ConversationTestData.SeedMessageAsync(db, conversation.Id, users[0].Id, "Viejo");
-        var (hub, context) = CreateHub(db, users[0].Id);
+        var (hub, context, _) = CreateHub(db, users[0].Id);
 
         await hub.EditMessage(conversation.Id, message.Id, "Nuevo");
 
@@ -73,7 +75,7 @@ public class MessageHubTests(SocialTestFixture fixture)
         message.CreatedAt = DateTime.UtcNow.AddMinutes(-20);
         await db.SaveChangesAsync();
 
-        var (hub, context) = CreateHub(db, users[0].Id);
+        var (hub, context, _) = CreateHub(db, users[0].Id);
 
         await Assert.ThrowsAnyAsync<Exception>(() => hub.EditMessage(conversation.Id, message.Id, "Nuevo"));
         Assert.Empty(context.Deliveries);
@@ -86,7 +88,7 @@ public class MessageHubTests(SocialTestFixture fixture)
         var users = await TestUsers.SeedAsync(db, 2);
         var conversation = await ConversationTestData.SeedConversationAsync(db, users[0].Id, users[1].Id);
         var message = await ConversationTestData.SeedMessageAsync(db, conversation.Id, users[0].Id, "Suyo");
-        var (hub, _) = CreateHub(db, users[1].Id);
+        var (hub, _, _) = CreateHub(db, users[1].Id);
 
         await Assert.ThrowsAnyAsync<Exception>(() => hub.EditMessage(conversation.Id, message.Id, "Intruso"));
     }
@@ -98,7 +100,7 @@ public class MessageHubTests(SocialTestFixture fixture)
         var users = await TestUsers.SeedAsync(db, 2);
         var conversation = await ConversationTestData.SeedConversationAsync(db, users[0].Id, users[1].Id);
         var message = await ConversationTestData.SeedMessageAsync(db, conversation.Id, users[0].Id, "Hola");
-        var (hub, context) = CreateHub(db, users[0].Id);
+        var (hub, context, _) = CreateHub(db, users[0].Id);
 
         await hub.DeleteMessage(conversation.Id, message.Id);
 
@@ -113,7 +115,7 @@ public class MessageHubTests(SocialTestFixture fixture)
         await using var db = fixture.CreateContext();
         var users = await TestUsers.SeedAsync(db, 2);
         var conversation = await ConversationTestData.SeedConversationAsync(db, users[0].Id, users[1].Id);
-        var (hub, context) = CreateHub(db, users[0].Id);
+        var (hub, context, _) = CreateHub(db, users[0].Id);
 
         await hub.SendMessage(conversation.Id, "Hola");
 
@@ -130,7 +132,7 @@ public class MessageHubTests(SocialTestFixture fixture)
         await using var db = fixture.CreateContext();
         var users = await TestUsers.SeedAsync(db, 2);
         var conversation = await ConversationTestData.SeedConversationAsync(db, users[0].Id, users[1].Id);
-        var (hub, context) = CreateHub(db, users[0].Id);
+        var (hub, context, _) = CreateHub(db, users[0].Id);
         context.FailOnSend = true;
 
         await hub.SendMessage(conversation.Id, "Hola");

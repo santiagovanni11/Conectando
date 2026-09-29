@@ -22,6 +22,19 @@ internal static class ConversationGroups
 }
 
 /// <summary>
+/// Nombres de los eventos de contadores.
+/// </summary>
+/// <remarks>
+/// En un solo lugar y no repetidos como string: un evento mal escrito en un
+/// archivo y bien escrito en otro se traduce en un contador que se actualiza
+/// a veces y otras no, que es la peor forma de falla que hay.
+/// </remarks>
+public static class NavCountsEvents
+{
+    public const string Changed = "NavCountsChanged";
+}
+
+/// <summary>
 /// Base de los hubs: identidad de quien llama y forma de reportar un fallo.
 /// </summary>
 /// <remarks>

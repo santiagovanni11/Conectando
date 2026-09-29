@@ -4,10 +4,19 @@ using Conectando.Api.Exceptions;
 using Conectando.Api.Interfaces;
 using Conectando.Api.Models;
 using Microsoft.EntityFrameworkCore;
-
 namespace Conectando.Api.Services;
 
-public class NotificationService(ConectandoDbContext dbContext) : INotificationService
+/// <summary>
+/// Lectura de las notificaciones.
+/// </summary>
+/// <remarks>
+/// Partido en dos porque son dos caminos distintos
+/// <c>NotificationService.Write</c> crea y marca como leído. Juntos pasaron de
+/// 150 líneas, y además las escrituras son las que necesitan avisar a la
+/// navegación, así que conviene que se vean.
+/// </remarks>
+public partial class NotificationService(ConectandoDbContext dbContext, INavCountsBroadcaster navCounts)
+    : INotificationService
 {
     private const int MaxLimit = 50;
 
@@ -66,62 +75,6 @@ public class NotificationService(ConectandoDbContext dbContext) : INotificationS
             .CountAsync(n => n.RecipientId == userId && n.ReadAt == null, cancellationToken);
 
         return new UnreadCountDto { Count = count };
-    }
-
-    public async Task MarkAsReadAsync(Guid userId, Guid notificationId, CancellationToken cancellationToken = default)
-    {
-        var notification = await dbContext.Notifications
-            .FirstOrDefaultAsync(n => n.Id == notificationId && n.RecipientId == userId, cancellationToken);
-
-        if (notification is null) throw new NotificationNotFoundException();
-        if (notification.ReadAt is not null) return;
-
-        notification.ReadAt = DateTime.UtcNow;
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task MarkAllAsReadAsync(Guid userId, CancellationToken cancellationToken = default)
-    {
-        var pending = await dbContext.Notifications
-            .Where(n => n.RecipientId == userId && n.ReadAt == null)
-            .ToListAsync(cancellationToken);
-
-        if (pending.Count == 0) return;
-
-        var now = DateTime.UtcNow;
-        foreach (var notification in pending)
-        {
-            notification.ReadAt = now;
-        }
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task NotifyAsync(Guid recipientId, Guid actorId, NotificationTypeRequest type, Guid? postId, CancellationToken cancellationToken = default)
-    {
-        // No avisarse a uno mismo ni duplicar la misma interacción.
-        if (recipientId == actorId) return;
-
-        var alreadyExists = await dbContext.Notifications.AnyAsync(
-            n => n.RecipientId == recipientId
-                 && n.ActorId == actorId
-                 && n.Type == (NotificationType)type
-                 && n.PostId == postId,
-            cancellationToken);
-
-        if (alreadyExists) return;
-
-        dbContext.Notifications.Add(new Notification
-        {
-            Id = Guid.NewGuid(),
-            RecipientId = recipientId,
-            ActorId = actorId,
-            Type = (NotificationType)type,
-            PostId = postId,
-            CreatedAt = DateTime.UtcNow,
-        });
-
-        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private static NotificationDto Map(NotificationRow row) => new()

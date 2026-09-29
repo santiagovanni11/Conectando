@@ -35,6 +35,9 @@ services.AddScoped<IUserConnectionsService, UserConnectionsService>();
         // puede activar el hub y cierra la conexion sin explicar por que: la
         // app entera anda y solo el tiempo real queda muerto.
         services.AddScoped<ConversationBroadcaster>();
+        // El que manda los contadores al hub. Scoped como el resto: depende
+        // del DbContext, que es por request.
+        services.AddScoped<INavCountsBroadcaster, NavCountsBroadcaster>();
 services.AddScoped<INavCountService, NavCountService>();
         services.AddScoped<IFriendRequestService, FriendRequestService>();
         services.AddScoped<IFriendshipService, FriendshipService>();

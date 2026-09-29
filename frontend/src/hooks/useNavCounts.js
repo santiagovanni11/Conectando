@@ -46,10 +46,11 @@ export function useNavCounts() {
     }
   }, [])
 
-  // Un mensaje nuevo o una notificación cambian los contadores al instante.
+  // El camino normal: el servidor avisa con los números ya contados y solo
+  // hay que pintarlos. El poll de arriba queda como red de seguridad para lo
+  // que no pasa por el hub, y por si la conexión se perdió sin que se note.
   useMessageHub({
-    onMessage: () => refresh(),
-    onSeen: () => refresh(),
+    onNavCounts: (data) => setCounts(data),
   })
 
   // Al volver a la pestaña: puede haber cambios mientras no se miraba.
