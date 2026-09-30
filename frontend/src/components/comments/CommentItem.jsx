@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Avatar from '../ui/Avatar'
 import CommentEditForm from './CommentEditForm'
 import Loader from '../ui/Loader'
+import UserHandle from '../users/UserHandle'
 import { formatRelativeTime } from '../../utils/dateFormatter'
 import { useAuth } from '../../hooks/useAuth'
 
@@ -91,7 +92,7 @@ export default function CommentItem({
           )}
           {isReply && (
             <span className="comment__reply-indicator">
-              ↳ Respondiendo a <span className="comment__reply-name">@{comment.author.userName}</span>
+              ↳ Respondiendo a <UserHandle user={comment.author} className="comment__reply-name" />
             </span>
           )}
           {isOwn && !editing && (

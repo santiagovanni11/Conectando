@@ -22,11 +22,14 @@ public partial class ConversationService
         if (row.ReplyToMessageId is null) return null;
 
         var isDeleted = row.ReplyToIsDeleted ?? false;
+        var autorEliminado = row.ReplyToSenderIsDeleted ?? false;
 
         return new MessageReplyDto
         {
             Id = row.ReplyToMessageId.Value,
-            SenderDisplayName = row.ReplyToDisplayName ?? string.Empty,
+            SenderDisplayName = autorEliminado
+                ? UserPresentation.DeletedDisplayName
+                : row.ReplyToDisplayName ?? string.Empty,
             Preview = isDeleted ? string.Empty : Clip(row.ReplyToContent ?? string.Empty),
             IsDeleted = isDeleted,
         };
@@ -54,9 +57,12 @@ public partial class ConversationService
         Sender = new MessageAuthorDto
         {
             Id = row.SenderId,
-            UserName = row.SenderUserName,
-            DisplayName = row.SenderDisplayName,
-            ProfileImageUrl = row.SenderProfileImageUrl,
+            UserName = row.SenderIsDeleted ? string.Empty : row.SenderUserName,
+            DisplayName = row.SenderIsDeleted
+                ? UserPresentation.DeletedDisplayName
+                : row.SenderDisplayName,
+            ProfileImageUrl = row.SenderIsDeleted ? null : row.SenderProfileImageUrl,
+            IsDeleted = row.SenderIsDeleted,
         },
     };
 
@@ -76,10 +82,12 @@ public partial class ConversationService
                 m.Sender.ProfileImageUrl,
                 m.EditedAt,
                 m.IsDeleted,
+                m.Sender.DeletedAt != null,
                 m.ReplyToMessageId,
                 m.ReplyToMessage!.Sender.DisplayName,
                 m.ReplyToMessage!.Content,
-                m.ReplyToMessage!.IsDeleted))
+                m.ReplyToMessage!.IsDeleted,
+                m.ReplyToMessage!.Sender.DeletedAt != null))
             .FirstAsync(cancellationToken);
 
         // Acaba de salir: el otro todavía no pudo leerlo.

@@ -1,20 +1,25 @@
 using Conectando.Api.DTOs.Account;
 using Conectando.Api.Exceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Conectando.Api.Services;
 
 public partial class AccountService
 {
     /// <summary>
-    /// Da de baja la cuenta anonimizándola.
+    /// Da de baja la cuenta: borra todo lo que dejó y deja la fila vacía.
     /// </summary>
     /// <remarks>
-    /// No se borra la fila. Mensajes, comentarios, publicaciones y Likes la
-    /// apuntan con clave foránea: borrarla de verdad revienta la base, y
-    /// cambiar esas relaciones a cascada llevaría por delante el contenido de
-    /// otras personas. Entonces se limpian los datos personales y se conserva
-    /// el vínculo, para que el chat del otro siga ahí.
+    /// La fila no se borra. Los mensajes la apuntan con clave foránea y el chat
+    /// del otro tiene que seguir ahí: si la fila desapareciera, o el mensaje
+    /// se iría por cascada o la base lo impediría. Entonces se limpia todo lo
+    /// demás y la fila queda como un cascarón, con los datos personales
+    /// sustituidos.
+    ///
+    /// <para>
+    /// Lo que ve el otro en ese chat es "cuenta eliminada", no el cascarón:
+    /// ver un identificador técnico en pantalla confirma que existió una
+    /// cuenta y parece un error, cuando en realidad es el resultado esperado.
+    /// </para>
     /// </remarks>
     public async Task DeleteAccountAsync(
         Guid userId,
@@ -31,7 +36,9 @@ public partial class AccountService
         }
 
         Anonymize(user);
-        await _db.SaveChangesAsync(cancellationToken);
+
+        await PurgarAsync(userId, cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
     }
 
     /// <summary>
@@ -40,9 +47,14 @@ public partial class AccountService
     /// <remarks>
     /// El email y el nombre de usuario llevan el id para seguir siendo únicos:
     /// los usa la base como clave, y si dos cuentas eliminadas compartieran
-    /// "eliminado", la segunda no se podría guardar. La contraseña se
-    /// reemplaza por un hash aleatorio en vez de vaciarse, porque un hash
-    /// vacío rompería la verificación en vez de rechazarla.
+    /// "eliminado", la segunda no se podría guardar. Ese id nunca se muestra —
+    /// <c>UserPresentation</c> lo sustituye por una etiqueta neutra antes de
+    /// que llegue a la pantalla— pero hace falta que sea único en la base.
+    ///
+    /// <para>
+    /// La contraseña se reemplaza por un hash aleatorio en vez de vaciarse,
+    /// porque un hash vacío rompería la verificación en vez de rechazarla.
+    /// </para>
     /// </remarks>
     private static void Anonymize(Models.AppUser user)
     {

@@ -49,9 +49,17 @@ public class MessageReplyDto
 public class MessageAuthorDto
 {
     public Guid Id { get; init; }
+
+    /// <summary>
+    /// Vacío si el autor dio de baja la cuenta. El identificador que queda en
+    /// la base no se manda: se vería en pantalla y no le sirve de nada a
+    /// quien lee el chat.
+    /// </summary>
     public string UserName { get; init; } = string.Empty;
+
     public string DisplayName { get; init; } = string.Empty;
     public string? ProfileImageUrl { get; init; }
+    public bool IsDeleted { get; init; }
 }
 
 public class MessagePageDto

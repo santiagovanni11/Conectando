@@ -1,3 +1,5 @@
+import UserHandle from '../users/UserHandle'
+
 export default function LikeUserItem({ user }) {
   return (
     <li className="like-user">
@@ -12,7 +14,7 @@ export default function LikeUserItem({ user }) {
       </div>
       <div className="like-user__info">
         <span className="like-user__name">{user.displayName}</span>
-        <span className="like-user__username">@{user.userName}</span>
+        <UserHandle user={user} className="like-user__username" />
       </div>
     </li>
   )

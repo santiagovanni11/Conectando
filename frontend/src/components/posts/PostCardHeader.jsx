@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Avatar from '../ui/Avatar'
 import IconButton from '../ui/IconButton'
+import UserHandle from '../users/UserHandle'
 import { formatRelativeTime } from '../../utils/dateFormatter'
 import { ROUTES } from '../../constants/routes'
 
@@ -51,7 +52,9 @@ export default function PostCardHeader({ post, own = false, onEdit, onDelete }) 
           size="sm"
         />
         <span className="post-card__identity">
-          <span className="post-card__name">@{post.author.userName}</span>
+          {/* El nombre lo decide UserHandle: si la cuenta fue dada de baja,
+              muestra la etiqueta y no el identificador que quedó guardado. */}
+          <UserHandle user={post.author} className="post-card__name" />
           <span className="post-card__sub">{formatRelativeTime(post.createdAt)}</span>
         </span>
       </Link>

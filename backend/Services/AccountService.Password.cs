@@ -45,6 +45,6 @@ public partial class AccountService
         user.SecurityStamp = Guid.NewGuid();
         user.UpdatedAt = DateTime.UtcNow;
 
-        await _db.SaveChangesAsync(cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
     }
 }

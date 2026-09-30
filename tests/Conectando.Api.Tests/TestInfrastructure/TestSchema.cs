@@ -15,6 +15,7 @@ public static partial class TestSchema
         DROP TABLE IF EXISTS "notifications" CASCADE;
         DROP TABLE IF EXISTS "post_media" CASCADE;
         DROP TABLE IF EXISTS "post_saves" CASCADE;
+        DROP TABLE IF EXISTS "shares" CASCADE;
         DROP TABLE IF EXISTS "likes" CASCADE;
         DROP TABLE IF EXISTS "posts" CASCADE;
         DROP TABLE IF EXISTS "messages" CASCADE;

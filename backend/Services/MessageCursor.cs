@@ -17,6 +17,9 @@ internal sealed record MessageRow(
     string? SenderProfileImageUrl,
     DateTime? EditedAt,
     bool IsDeleted,
+    // Si el autor dio de baja la cuenta. Viaja con la fila para que el mapa
+    // pueda tapar el identificador sin volver a consultar la base.
+    bool SenderIsDeleted,
     // Datos de la cita, cuando el mensaje responde a otro. Con default para
     // que las consultas que no necesitan la cita no la proyecten.
     //
@@ -26,7 +29,8 @@ internal sealed record MessageRow(
     Guid? ReplyToMessageId = null,
     string? ReplyToDisplayName = null,
     string? ReplyToContent = null,
-    bool? ReplyToIsDeleted = null);
+    bool? ReplyToIsDeleted = null,
+    bool? ReplyToSenderIsDeleted = null);
 
 internal sealed record PeerMessageStamp(Guid ConversationId, DateTime CreatedAt);
 
@@ -47,7 +51,8 @@ internal sealed record PeerRow(
     Guid UserId,
     string UserName,
     string DisplayName,
-    string? ProfileImageUrl);
+    string? ProfileImageUrl,
+    bool IsDeleted);
 
 /// <summary>
 /// Postgres guarda las fechas con precisión de microsegundos y .NET con

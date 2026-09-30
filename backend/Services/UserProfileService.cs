@@ -62,7 +62,7 @@ public partial class UserProfileService : IUserProfileService
     {
         var profile = await dbContext.Users
             .AsNoTracking()
-            .Where(u => u.Id == userId)
+            .Where(u => u.Id == userId && u.DeletedAt == null)
             .Select(u => new PublicProfileDto
             {
                 Id = u.Id,

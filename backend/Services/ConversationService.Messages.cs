@@ -45,10 +45,12 @@ public partial class ConversationService
                 m.Sender.ProfileImageUrl,
                 m.EditedAt,
                 m.IsDeleted,
+                m.Sender.DeletedAt != null,
                 m.ReplyToMessageId,
                 m.ReplyToMessage!.Sender.DisplayName,
                 m.ReplyToMessage!.Content,
-                m.ReplyToMessage!.IsDeleted))
+                m.ReplyToMessage!.IsDeleted,
+                m.ReplyToMessage!.Sender.DeletedAt != null))
             .ToListAsync(cancellationToken);
 
         var hasMore = rows.Count > take;

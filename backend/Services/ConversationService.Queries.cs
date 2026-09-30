@@ -26,7 +26,8 @@ public partial class ConversationService
                 m.UserId,
                 m.User.UserName,
                 m.User.DisplayName,
-                m.User.ProfileImageUrl))
+                m.User.ProfileImageUrl,
+                m.User.DeletedAt != null))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (peer is null) return new ConversationPeerDto();
@@ -34,9 +35,15 @@ public partial class ConversationService
         return new ConversationPeerDto
         {
             Id = peer.UserId,
-            UserName = peer.UserName,
-            DisplayName = peer.DisplayName,
-            ProfileImageUrl = peer.ProfileImageUrl,
+            // Una cuenta dada de baja se ve como tal, sin el identificador que
+            // quedó guardado: en el chat no hay a dónde ir con esa cuenta, así
+            // que lo que se muestra es una etiqueta y nada más.
+            UserName = peer.IsDeleted ? string.Empty : peer.UserName,
+            DisplayName = peer.IsDeleted
+                ? UserPresentation.DeletedDisplayName
+                : peer.DisplayName,
+            ProfileImageUrl = peer.IsDeleted ? null : peer.ProfileImageUrl,
+            IsDeleted = peer.IsDeleted,
         };
     }
 
@@ -84,7 +91,8 @@ public partial class ConversationService
                 m.Sender.DisplayName,
                 m.Sender.ProfileImageUrl,
                 m.EditedAt,
-                m.IsDeleted))
+                m.IsDeleted,
+                m.Sender.DeletedAt != null))
             .ToListAsync(cancellationToken);
 
         // Cada conversación usa su propio corte, que es lo que leyó el otro.

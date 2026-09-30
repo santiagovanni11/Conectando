@@ -4,6 +4,7 @@ import Icon from '../ui/Icon/Icon'
 import IconButton from '../ui/IconButton'
 import EmptyState from '../ui/EmptyState'
 import ErrorState from '../ui/ErrorState'
+import UserHandle from '../users/UserHandle'
 import { ROUTES } from '../../constants/routes'
 
 export default function FriendsList({ friends, status, error, busyId, onRemove, onRetry }) {
@@ -29,7 +30,7 @@ export default function FriendsList({ friends, status, error, busyId, onRemove, 
             <Avatar name={item.user.displayName} src={item.user.profileImageUrl} size="sm" />
             <span className="friends-row__text">
               <span className="friends-row__name">{item.user.displayName}</span>
-              <span className="friends-row__meta">@{item.user.userName}</span>
+              <UserHandle user={item.user} className="friends-row__meta" />
             </span>
           </Link>
           <IconButton

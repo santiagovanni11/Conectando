@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import UserHandle from '../users/UserHandle'
 
 const CAPTION_LIMIT = 125
 
@@ -12,7 +13,7 @@ export default function PostCardContent({ post, className = '' }) {
 
   return (
     <p className={`post-card__content ${className}`.trim()}>
-      <span className="post-card__caption-username">@{post.author.userName}</span>
+      <UserHandle user={post.author} className="post-card__caption-username" />
       {' '}
       <span className="post-card__caption-text">{shown}</span>
       {isLong && !expanded && (

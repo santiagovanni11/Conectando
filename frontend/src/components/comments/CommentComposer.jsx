@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Avatar from '../ui/Avatar'
 import Icon from '../ui/Icon/Icon'
 import Loader from '../ui/Loader'
+import UserHandle from '../users/UserHandle'
 import { useAuth } from '../../hooks/useAuth'
 import { useAutoResize } from '../../hooks/useAutoResize'
 import { MAX_COMMENT_LENGTH } from '../../constants/comments'
@@ -46,7 +47,7 @@ export default function CommentComposer({
           <Icon name="chevron-right" size="sm" className="comment-composer__replying-icon" />
           <span className="comment-composer__replying-text">
             Respondiendo a{' '}
-            <span className="comment-composer__reply-name">@{replyTo.author.userName}</span>
+            <UserHandle user={replyTo.author} className="comment-composer__reply-name" />
           </span>
           <button type="button" className="comment-composer__cancel" onClick={handleCancel} disabled={submitting}>
             Cancelar

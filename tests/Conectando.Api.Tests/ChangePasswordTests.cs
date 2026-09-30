@@ -13,7 +13,7 @@ namespace Conectando.Api.Tests;
 [Collection("Social")]
 public class ChangePasswordTests(SocialTestFixture fixture)
 {
-    private static AccountService CreateService(ConectandoDbContext db) => new(db);
+    private static AccountService CreateService(ConectandoDbContext db) => new(db, new FakeMediaCleaner());
 
     private static ChangePasswordRequest Request(
         string current = TestUsers.ValidPassword,

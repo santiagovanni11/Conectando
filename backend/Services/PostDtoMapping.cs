@@ -11,13 +11,12 @@ public static class PostDtoMapping
         return new PostDto
         {
             Id = post.Id,
-            Author = new UserSummaryDto
-            {
-                Id = author.Id,
-                UserName = author.UserName,
-                DisplayName = author.DisplayName,
-                ProfileImageUrl = author.ProfileImageUrl,
-            },
+            Author = UserPresentation.De(
+                author.Id,
+                author.UserName,
+                author.DisplayName,
+                author.ProfileImageUrl,
+                author.DeletedAt is not null),
             Content = post.Content,
             Privacy = post.Privacy,
             CreatedAt = post.CreatedAt,

@@ -68,5 +68,16 @@ public static partial class TestSchema
         );
         CREATE UNIQUE INDEX "IX_post_saves_UserId_PostId" ON "post_saves" ("UserId", "PostId");
         CREATE INDEX "IX_post_saves_UserId_CreatedAt" ON "post_saves" ("UserId", "CreatedAt");
+        CREATE TABLE "shares" (
+            "Id" uuid NOT NULL,
+            "UserId" uuid NOT NULL,
+            "PostId" uuid NOT NULL,
+            "CreatedAt" timestamp with time zone NOT NULL DEFAULT now(),
+            CONSTRAINT "PK_shares" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_shares_posts_PostId" FOREIGN KEY ("PostId") REFERENCES "posts" ("Id") ON DELETE CASCADE,
+            CONSTRAINT "FK_shares_users_UserId" FOREIGN KEY ("UserId") REFERENCES "users" ("Id")
+        );
+        CREATE INDEX "IX_shares_PostId_CreatedAt" ON "shares" ("PostId", "CreatedAt");
+        CREATE INDEX "IX_shares_UserId_CreatedAt" ON "shares" ("UserId", "CreatedAt");
         """;
 }

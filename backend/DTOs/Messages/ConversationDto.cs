@@ -15,8 +15,16 @@ public class ConversationDto
 public class ConversationPeerDto
 {
     public Guid Id { get; init; }
+
+    /// <summary>
+    /// Vacío si la cuenta fue dada de baja. No se manda el
+    /// "eliminado-{id}" de la base: es un detalle interno y en pantalla
+    /// parece un error.
+    /// </summary>
     public string UserName { get; init; } = string.Empty;
+
     public string DisplayName { get; init; } = string.Empty;
     public string? ProfileImageUrl { get; init; }
     public bool IsOnline { get; init; }
+    public bool IsDeleted { get; init; }
 }

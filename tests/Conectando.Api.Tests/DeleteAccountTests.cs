@@ -18,7 +18,7 @@ namespace Conectando.Api.Tests;
 [Collection("Social")]
 public class DeleteAccountTests(SocialTestFixture fixture)
 {
-    private static AccountService CreateService(ConectandoDbContext db) => new(db);
+    private static AccountService CreateService(ConectandoDbContext db) => new(db, new FakeMediaCleaner());
 
     private static DeleteAccountRequest Request(
         string current = TestUsers.ValidPassword,
