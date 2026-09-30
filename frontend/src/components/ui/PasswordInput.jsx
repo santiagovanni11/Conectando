@@ -3,6 +3,25 @@ import Field from './Field'
 import IconButton from './IconButton'
 
 /**
+ * Aspecto del botón según el estado del campo.
+ *
+ * El ícono y el texto accesible salen de acá, de la misma fila, y no
+ * sueltos en el JSX. Antes cada uno se escribía por su cuenta y
+ * quedaron al revés: se veía "ojo tachado" justo cuando la contraseña
+ * estaba a la vista. No se notaba porque el texto decía bien la acción y
+ * los tests solo miraban el texto.
+ *
+ * Responde a dos preguntas distintas, y por eso son dos campos: el ícono
+ * describe el ESTADO —tachado significa que no se está viendo— y el texto
+ * describe la ACCIÓN que hace el botón, que es lo que necesita un lector
+ * de pantalla para saber qué va a pasar al tocarlo.
+ */
+export const ASPECTO_CONTRASENA = {
+  oculta: { icono: 'eye-off', accion: 'Mostrar contraseña' },
+  visible: { icono: 'eye', accion: 'Ocultar contraseña' },
+}
+
+/**
  * Campo de contraseña con el botón del ojo para verla.
  *
  * Sirve para todos los formularios que piden una clave, no solo para
@@ -11,6 +30,7 @@ import IconButton from './IconButton'
  */
 export default function PasswordInput({ label, error, hint, className = '', required, ...props }) {
   const [visible, setVisible] = useState(false)
+  const aspecto = ASPECTO_CONTRASENA[visible ? 'visible' : 'oculta']
 
   function campo(id, describedBy) {
     return (
@@ -26,8 +46,8 @@ export default function PasswordInput({ label, error, hint, className = '', requ
         />
         <IconButton
           type="button"
-          name={visible ? 'eye-off' : 'eye'}
-          label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+          name={aspecto.icono}
+          label={aspecto.accion}
           size="md"
           variant="ghost"
           className="password-input__toggle"
