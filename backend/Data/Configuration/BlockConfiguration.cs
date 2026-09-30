@@ -11,17 +11,19 @@ public class BlockConfiguration : IEntityTypeConfiguration<Block>
         builder.ToTable("blocks", t => t
             .HasCheckConstraint("CK_blocks_no_self", "\"UserId\" <> \"BlockedUserId\""));
 
+        builder.HasQueryFilter(CuentasEliminadas.BloqueoEntreVivas);
+
         builder.HasKey(b => new { b.UserId, b.BlockedUserId });
 
         builder.Property(b => b.CreatedAt)
             .HasDefaultValueSql("now()");
 
-        builder.HasOne<AppUser>()
+        builder.HasOne(b => b.User)
             .WithMany()
             .HasForeignKey(b => b.UserId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne<AppUser>()
+        builder.HasOne(b => b.BlockedUser)
             .WithMany()
             .HasForeignKey(b => b.BlockedUserId)
             .OnDelete(DeleteBehavior.NoAction);

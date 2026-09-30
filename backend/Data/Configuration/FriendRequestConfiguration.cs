@@ -11,17 +11,19 @@ public class FriendRequestConfiguration : IEntityTypeConfiguration<FriendRequest
         builder.ToTable("friend_requests", t => t
             .HasCheckConstraint("CK_friend_requests_no_self", "\"RequesterId\" <> \"AddresseeId\""));
 
+        builder.HasQueryFilter(CuentasEliminadas.SolicitudEntreVivas);
+
         builder.HasKey(r => new { r.RequesterId, r.AddresseeId });
 
         builder.Property(r => r.CreatedAt)
             .HasDefaultValueSql("now()");
 
-        builder.HasOne<AppUser>()
+        builder.HasOne(r => r.Requester)
             .WithMany()
             .HasForeignKey(r => r.RequesterId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne<AppUser>()
+        builder.HasOne(r => r.Addressee)
             .WithMany()
             .HasForeignKey(r => r.AddresseeId)
             .OnDelete(DeleteBehavior.NoAction);

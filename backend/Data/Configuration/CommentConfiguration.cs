@@ -10,6 +10,8 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
     {
         builder.ToTable("comments");
 
+        builder.HasQueryFilter(CuentasEliminadas.ComentaristaVivo);
+
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.Content)

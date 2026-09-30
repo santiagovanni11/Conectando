@@ -32,22 +32,40 @@ public partial class AccountService
     private async Task PurgarAsync(Guid userId, CancellationToken cancellationToken)
     {
         await BorrarRelacionesAsync(userId, cancellationToken);
-        await db.PostSaves.Where(s => s.UserId == userId).ExecuteDeleteAsync(cancellationToken);
-        await db.Reports.Where(r => r.ReporterId == userId || r.TargetUserId == userId)
+
+        // IgnoreQueryFilters en todo esto, y no por descuido: al marcar la
+        // cuenta como dada de baja, los filtros globales la esconden, y justo
+        // esta es la única operación que tiene que seguir viéndola para poder
+        // borrar lo que dejó.
+        await db.PostSaves.IgnoreQueryFilters()
+            .Where(s => s.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+
+        await db.Reports.IgnoreQueryFilters()
+            .Where(r => r.ReporterId == userId || r.TargetUserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
-        await db.PasswordResetCodes.Where(c => c.UserId == userId).ExecuteDeleteAsync(cancellationToken);
 
-        await db.Comments.Where(c => c.AuthorId == userId).ExecuteDeleteAsync(cancellationToken);
-        await db.Likes.Where(l => l.UserId == userId).ExecuteDeleteAsync(cancellationToken);
-        await db.Shares.Where(s => s.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+        await db.PasswordResetCodes.IgnoreQueryFilters()
+            .Where(c => c.UserId == userId).ExecuteDeleteAsync(cancellationToken);
 
-        var archivos = await db.PostMedia
+        await db.Comments.IgnoreQueryFilters()
+            .Where(c => c.AuthorId == userId).ExecuteDeleteAsync(cancellationToken);
+
+        await db.Likes.IgnoreQueryFilters()
+            .Where(l => l.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+
+        await db.Shares.IgnoreQueryFilters()
+            .Where(s => s.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+
+        var archivos = await db.PostMedia.IgnoreQueryFilters()
             .Where(m => m.UserId == userId)
             .Select(m => m.PublicId)
             .ToListAsync(cancellationToken);
 
-        await db.PostMedia.Where(m => m.UserId == userId).ExecuteDeleteAsync(cancellationToken);
-        await db.Posts.Where(p => p.AuthorId == userId).ExecuteDeleteAsync(cancellationToken);
+        await db.PostMedia.IgnoreQueryFilters()
+            .Where(m => m.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+
+        await db.Posts.IgnoreQueryFilters()
+            .Where(p => p.AuthorId == userId).ExecuteDeleteAsync(cancellationToken);
 
         await LimpiarArchivosAsync(archivos, cancellationToken);
     }
@@ -63,17 +81,20 @@ public partial class AccountService
     /// </summary>
     private async Task BorrarRelacionesAsync(Guid userId, CancellationToken cancellationToken)
     {
-        await db.Follows.Where(f => f.UserId == userId || f.TargetUserId == userId)
+        await db.Follows.IgnoreQueryFilters()
+            .Where(f => f.UserId == userId || f.TargetUserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        await db.Friendships.Where(f => f.UserLowId == userId || f.UserHighId == userId)
+        await db.Friendships.IgnoreQueryFilters()
+            .Where(f => f.UserLowId == userId || f.UserHighId == userId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        await db.FriendRequests
+        await db.FriendRequests.IgnoreQueryFilters()
             .Where(r => r.RequesterId == userId || r.AddresseeId == userId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        await db.Blocks.Where(b => b.UserId == userId || b.BlockedUserId == userId)
+        await db.Blocks.IgnoreQueryFilters()
+            .Where(b => b.UserId == userId || b.BlockedUserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
     }
 

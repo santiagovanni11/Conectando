@@ -12,4 +12,12 @@ public class PostSave
     public Guid UserId { get; set; }
     public Guid PostId { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Para el filtro global: lo que guardó una cuenta dada de baja no puede
+    /// seguir apareciendo en la lista de guardados de nadie.
+    /// </summary>
+    public AppUser User { get; set; } = null!;
+
+    public Post Post { get; set; } = null!;
 }

@@ -10,6 +10,8 @@ public class LikeConfiguration : IEntityTypeConfiguration<Like>
     {
         builder.ToTable("likes");
 
+        builder.HasQueryFilter(CuentasEliminadas.QuienPusoMeGustaVivo);
+
         builder.HasKey(l => new { l.UserId, l.PostId });
 
         builder.Property(l => l.CreatedAt)

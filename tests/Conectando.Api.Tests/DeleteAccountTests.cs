@@ -39,7 +39,7 @@ public class DeleteAccountTests(SocialTestFixture fixture)
 
         await CreateService(db).DeleteAccountAsync(user.Id, Request());
 
-        var saved = await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id);
+        var saved = await db.Users.IgnoreQueryFilters().AsNoTracking().SingleAsync(u => u.Id == user.Id);
         Assert.NotNull(saved.DeletedAt);
         Assert.Equal("Usuario eliminado", saved.DisplayName);
         Assert.Null(saved.Bio);
@@ -55,7 +55,7 @@ public class DeleteAccountTests(SocialTestFixture fixture)
 
         await CreateService(db).DeleteAccountAsync(user.Id, Request());
 
-        var saved = await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id);
+        var saved = await db.Users.IgnoreQueryFilters().AsNoTracking().SingleAsync(u => u.Id == user.Id);
         Assert.False(BCrypt.Net.BCrypt.Verify(TestUsers.ValidPassword, saved.PasswordHash));
     }
 
@@ -68,7 +68,7 @@ public class DeleteAccountTests(SocialTestFixture fixture)
         await Assert.ThrowsAsync<CurrentPasswordIncorrectException>(() =>
             CreateService(db).DeleteAccountAsync(user.Id, Request(current: "NoEsLaMia9")));
 
-        var saved = await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id);
+        var saved = await db.Users.IgnoreQueryFilters().AsNoTracking().SingleAsync(u => u.Id == user.Id);
         Assert.Null(saved.DeletedAt);
     }
 
@@ -84,7 +84,7 @@ public class DeleteAccountTests(SocialTestFixture fixture)
                 user.Id,
                 Request(confirm: "OtraClave9")));
 
-        var saved = await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id);
+        var saved = await db.Users.IgnoreQueryFilters().AsNoTracking().SingleAsync(u => u.Id == user.Id);
         Assert.Null(saved.DeletedAt);
     }
 
@@ -103,6 +103,7 @@ public class DeleteAccountTests(SocialTestFixture fixture)
         // puede haber bajas de otros tests.
         var ids = users.Select(u => u.Id).ToList();
         var saved = await db.Users
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(u => ids.Contains(u.Id))
             .ToListAsync();
@@ -139,11 +140,11 @@ public class DeleteAccountTests(SocialTestFixture fixture)
         var user = (await TestUsers.SeedAsync(db, 1))[0];
         var service = CreateService(db);
         await service.DeleteAccountAsync(user.Id, Request());
-        var baja = await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id);
+        var baja = await db.Users.IgnoreQueryFilters().AsNoTracking().SingleAsync(u => u.Id == user.Id);
 
         await Assert.ThrowsAsync<UserNotFoundException>(() =>
             service.DeleteAccountAsync(user.Id, Request()));
 
-        Assert.Equal(baja.DeletedAt, (await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id)).DeletedAt);
+        Assert.Equal(baja.DeletedAt, (await db.Users.IgnoreQueryFilters().AsNoTracking().SingleAsync(u => u.Id == user.Id)).DeletedAt);
     }
 }

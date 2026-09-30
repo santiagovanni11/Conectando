@@ -10,6 +10,8 @@ public class PostMediaConfiguration : IEntityTypeConfiguration<PostMedia>
     {
         builder.ToTable("post_media");
 
+        builder.HasQueryFilter(CuentasEliminadas.DueñoVivo);
+
         builder.HasKey(m => m.Id);
 
         builder.Property(m => m.Url)

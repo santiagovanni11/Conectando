@@ -10,6 +10,8 @@ public class PasswordResetCodeConfiguration : IEntityTypeConfiguration<PasswordR
     {
         builder.ToTable("password_reset_codes");
 
+        builder.HasQueryFilter(CuentasEliminadas.ConCuentaViva);
+
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.CodeHash)

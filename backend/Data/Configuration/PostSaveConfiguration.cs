@@ -14,6 +14,8 @@ public class PostSaveConfiguration : IEntityTypeConfiguration<PostSave>
         // Core genera un alias "PostId1" al proyectar o filtrar, y Postgres
         // lo rechaza. Un Id propio evita ese problema y deja el índice único
         // como garantía de no duplicar.
+        builder.HasQueryFilter(CuentasEliminadas.QuienGuardoVivo);
+
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Id)
@@ -22,12 +24,12 @@ public class PostSaveConfiguration : IEntityTypeConfiguration<PostSave>
         builder.Property(s => s.CreatedAt)
             .HasDefaultValueSql("now()");
 
-        builder.HasOne<AppUser>()
+        builder.HasOne(s => s.User)
             .WithMany()
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<Post>()
+        builder.HasOne(s => s.Post)
             .WithMany()
             .HasForeignKey(s => s.PostId)
             .OnDelete(DeleteBehavior.Cascade);

@@ -10,6 +10,8 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
     {
         builder.ToTable("users");
 
+        builder.HasQueryFilter(CuentasEliminadas.Viva);
+
         builder.HasKey(u => u.Id);
 
         builder.Property(u => u.Id);

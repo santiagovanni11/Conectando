@@ -10,6 +10,8 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
     {
         builder.ToTable("notifications");
 
+        builder.HasQueryFilter(CuentasEliminadas.ActorVivo);
+
         builder.HasKey(n => n.Id);
 
         builder.Property(n => n.Type)

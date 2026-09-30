@@ -10,6 +10,8 @@ public class ShareConfiguration : IEntityTypeConfiguration<Share>
     {
         builder.ToTable("shares");
 
+        builder.HasQueryFilter(CuentasEliminadas.QuienCompartioVivo);
+
         builder.HasKey(s => new { s.UserId, s.PostId });
 
         builder.Property(s => s.CreatedAt)

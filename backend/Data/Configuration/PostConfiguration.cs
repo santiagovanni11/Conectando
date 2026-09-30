@@ -12,6 +12,8 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
     {
         builder.ToTable("posts");
 
+        builder.HasQueryFilter(CuentasEliminadas.AutorVivo);
+
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Content)
