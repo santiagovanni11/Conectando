@@ -46,6 +46,30 @@ app.UseForwardedHeaders(forwarded);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+// Las migraciones se aplican al arrancar, no a mano antes de cada deploy.
+//
+// El deploy publica la imagen y la levanta; nadie ejecuta `dotnet ef
+// database update`. Cuando se agregó una columna y se olvidó ese paso, cada
+// consulta que la nombraba devolvió 500 y el chat se vio vacío: los datos
+// estaban, la pantalla mentía. Con Migrate() el esquema nunca queda atrás.
+//
+// Solo al arrancar y no en cada request, así que el costo es una vez.
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ConectandoDbContext>();
+    var pending = (await db.Database.GetPendingMigrationsAsync()).ToList();
+
+    if (pending.Count > 0)
+    {
+        app.Logger.LogWarning(
+            "Hay {Count} migraciones sin aplicar: {Migrations}",
+            pending.Count,
+            string.Join(", ", pending));
+
+        await db.Database.MigrateAsync();
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCors(ServiceCollectionExtensions.DevCorsPolicy);

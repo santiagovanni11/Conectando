@@ -114,6 +114,7 @@ function ConversationView() {
         onDelete={thread.remove}
         onReply={startReply}
         actionError={thread.actionError}
+        error={thread.error}
       />
 
       <MessageComposer

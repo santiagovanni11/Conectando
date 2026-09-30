@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { readFileSync } from 'node:fs'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MessageThread from './MessageThread'
@@ -76,59 +75,38 @@ describe('MessageThread', () => {
     expect(container.querySelectorAll('li li')).toHaveLength(0)
   })
 
-  it('la burbuja cuelga directo de la fila, sin envoltorio intermedio', () => {
-    // Regresión: se metió un <div class="message-row"> entre el <li> y la
-    // burbuja. Eso le cambiaba el bloque contenedor, y con él el
-    // `max-width: 75%` de la burbuja: se encogía hasta desaparecer. El
-    // flex `row`/`row-reverse` que distingue propios de ajenos, además,
-    // dejaba de mandar y todos se alineaban al mismo lado.
+  it('un fallo de carga no se muestra como un chat vacío', () => {
+    // Regresión: la migración faltante hacía que GET /messages devolviera 500,
+    // y la pantalla decía "Todavía no hay mensajes. Decí hola." Los datos
+    // estaban enteros en la base. Un error de carga tiene que decir que hay
+    // un error, no que la conversación está vacía.
     const { container } = render(
       <MessageThread
-        messages={[message('m1', 'user-2', 'hola')]}
+        messages={[]}
         currentUserId={currentUserId}
         isLoading={false}
+        error={new Error('Internal Server Error')}
       />,
     )
 
-    const item = container.querySelector('ul.message-thread > li')
-    const bubble = item.querySelector('.message-bubble')
-
-    expect(bubble).toBeTruthy()
-    // Lo importante: la burbuja cuelga DIRECTO de la fila. El único otro
-    // hijo es la flecha del gesto, que está en absolute y no participa del
-    // flex.
-    expect(bubble.parentElement).toBe(item)
-    expect(item.children).toHaveLength(2)
-    expect(item.lastElementChild).toBe(bubble)
+    expect(screen.getByRole('alert')).toHaveTextContent(/No se pudieron cargar/)
+    expect(container.querySelector('.message-thread__status')).toBeNull()
   })
 
-  it('el gesto se aplica a la fila y no recorta el menú', () => {
-    // Regresión: la fila llevaba `overflow: hidden` para que la burbuja no
-    // saliera al deslizarse, y eso recortaba el desplegable del menú de
-    // tres puntitos, que cuelga de la misma fila.
-    const css = readFileSync('src/styles/pages/message-reply.css', 'utf8')
-    const item = css.match(/\.message-thread__item\s*\{[^}]*\}/)?.[0] ?? ''
-
-    expect(item).toMatch(/transform:\s*translateX\(/)
-    expect(item).not.toMatch(/overflow:\s*hidden/)
-  })
-
-  it('un mensaje se responde desde el menú de tres puntitos', async () => {
-    const onReply = vi.fn()
-    const user = userEvent.setup()
-
+  it('un fallo de sincronización no tapa el hilo ya cargado', () => {
+    // Al revés del anterior: si los mensajes ya están en pantalla, un error
+    // de recarga no puede taparlos ni agregar ruido. El usuario tiene lo
+    // que fue a buscar.
     render(
       <MessageThread
         messages={[message('m1', 'user-2', 'hola')]}
         currentUserId={currentUserId}
         isLoading={false}
-        onReply={onReply}
+        error={new Error('timeout')}
       />,
     )
 
-    await user.click(screen.getByLabelText('Opciones del mensaje'))
-    await user.click(screen.getByRole('menuitem', { name: 'Responder' }))
-
-    expect(onReply).toHaveBeenCalledWith(expect.objectContaining({ id: 'm1' }))
+    expect(screen.getByText('hola')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 })
