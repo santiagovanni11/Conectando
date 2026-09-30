@@ -6,11 +6,25 @@
   gap: var(--space-6, 1.5rem);
 }
 
+/*
+ * Las dos tarjetas se centran y se acotan con min() en vez de un ancho
+ * fijo. Con `max-width: 28rem` a secas, en una pantalla más angosta que
+ * eso la tarjeta sí respetaba el viewport, pero quedaba pegada al borde
+ * izquierdo en vez de centrada como el resto de la página. El
+ * `margin-inline` resuelve las dos cosas de una.
+ */
+.account-form,
+.account-danger {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(28rem, 100%);
+  margin-inline: auto;
+}
+
 .account-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-3, 0.75rem);
-  max-width: 28rem;
   padding: var(--space-5, 1.25rem);
   border: 1px solid var(--color-border, #e2e6ea);
   border-radius: var(--radius-md, 8px);
@@ -55,7 +69,6 @@
   flex-direction: column;
   gap: var(--space-3, 0.75rem);
   align-items: flex-start;
-  max-width: 28rem;
   padding: var(--space-5, 1.25rem);
   border: 1px solid var(--color-border, #e2e6ea);
   border-radius: var(--radius-md, 8px);
@@ -72,4 +85,24 @@
   margin: 0;
   font-size: 0.9rem;
   color: var(--color-text-muted, #5b6770);
+}
+
+/*
+ * En un telefono, dos botones alineados a la derecha se leen mal y
+ * cuestan de alcanzar: quedan pegados al borde y son los mas chicos de
+ * la pantalla. Apilados y de ancho completo se aprietan bien con el
+ * pulgar.
+ *
+ * `column-reverse` invierte el orden visual para que la accion destructiva
+ * quede arriba, que es como se lee en el resto de la app: confirmar en
+ * la parte de abajo del pulgar.
+ */
+@media (max-width: 30rem) {
+  .account-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .account-form__actions .btn {
+    width: 100%;
+  }
 }
