@@ -16,14 +16,18 @@ public partial class PasswordResetService : IPasswordResetService
     /// <summary>Nombre con el que se firma el correo, desde la configuración.</summary>
     private readonly string _marca;
 
+    private readonly ILogger<PasswordResetService> _logger;
+
     public PasswordResetService(
         ConectandoDbContext db,
         IEmailSender email,
-        MailSettings settings)
+        MailSettings settings,
+        ILogger<PasswordResetService> logger)
     {
         _db = db;
         _email = email;
         _marca = settings.BrandName;
+        _logger = logger;
     }
 
     /// <summary>
@@ -59,8 +63,43 @@ public partial class PasswordResetService : IPasswordResetService
         });
 
         await _db.SaveChangesAsync(cancellationToken);
-        await _email.SendAsync(ConstruirMensaje(user.Email, code), cancellationToken);
+        await EnviarSinRomper(user.Email, code, cancellationToken);
 
         await LimpiarVencidosAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Manda el código sin que un fallo del proveedor rompa la respuesta.
+    ///
+    /// El código ya está guardado cuando se llega acá, así que la operación
+    /// se hizo. Que el proveedor falle —una clave mal puesta, una cuota
+    /// vencida, un servicio caído— no la deshace, y el usuario no puede
+    /// hacer nada al respecto: puede volver a pedirlo en un minuto y pasar
+    /// por lo mismo.
+    ///
+    /// Y sobre todo, dejarlo escapar rompía la regla más importante del
+    /// flujo: con el envío caído, un correo registrado daba 500 y uno
+    /// inexistente daba 202. Con solo mirar el status se armaba la lista de
+    /// quién tiene cuenta, que es justo lo que el resto del método evita.
+    ///
+    /// Se registra con el detalle de la excepción para que el problema se
+    /// pueda diagnosticar del lado del servidor.
+    /// </summary>
+    private async Task EnviarSinRomper(
+        string correo,
+        string codigo,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _email.SendAsync(ConstruirMensaje(correo, codigo), cancellationToken);
+        }
+        catch (Exception cause)
+        {
+            _logger.LogError(
+                cause,
+                "No se pudo mandar el código de recuperación a {Correo}. Configurá MailSettings.",
+                correo);
+        }
     }
 }

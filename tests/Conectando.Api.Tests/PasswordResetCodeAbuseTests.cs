@@ -5,6 +5,7 @@ using Conectando.Api.Services;
 using Conectando.Api.Settings;
 using Conectando.Api.Tests.TestInfrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Conectando.Api.Tests;
 
@@ -19,7 +20,7 @@ namespace Conectando.Api.Tests;
 public class PasswordResetCodeAbuseTests(SocialTestFixture fixture)
 {
     private static PasswordResetService Crear(ConectandoDbContext db, FakeEmailSender email) =>
-        new(db, email, new MailSettings { BrandName = "Conectando" });
+        new(db, email, new MailSettings { BrandName = "Conectando" }, NullLogger<PasswordResetService>.Instance);
 
     private static ConfirmPasswordResetRequest Pedir(string email, string code) => new()
     {

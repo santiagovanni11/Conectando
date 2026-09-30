@@ -3,6 +3,7 @@ using Conectando.Api.Services;
 using Conectando.Api.Settings;
 using Conectando.Api.Tests.TestInfrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Conectando.Api.Tests;
 
@@ -15,7 +16,7 @@ namespace Conectando.Api.Tests;
 public class PasswordResetTests(SocialTestFixture fixture)
 {
     private static PasswordResetService Crear(ConectandoDbContext db, FakeEmailSender email) =>
-        new(db, email, new MailSettings { BrandName = "Conectando" });
+        new(db, email, new MailSettings { BrandName = "Conectando" }, NullLogger<PasswordResetService>.Instance);
 
     /// <summary>Saca el código del correo, que es donde queda escrito.</summary>
     private static string CodigoEnviado(FakeEmailSender email)
