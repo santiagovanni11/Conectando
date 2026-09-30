@@ -7,8 +7,16 @@ import {
 } from '../../constants/messages'
 import SeenTicks from './SeenTicks'
 import MuteConversationButton from './MuteConversationButton'
+import ConversationAvatar from './ConversationAvatar'
 
-/** Fila de la lista de conversaciones. */
+/**
+ * Fila de la lista de conversaciones.
+ *
+ * Va foto + nombre + hora arriba y previsualización + contadores abajo, como
+ * en WhatsApp e Instagram. La foto va sola y no junto al nombre porque acá el
+ * nombre comparte fila con la hora; en el encabezado del chat, en cambio, van
+ * juntos. Por eso son dos componentes y no uno con dos variantes.
+ */
 export default function ConversationListItem({ conversation, currentUserId, onMute }) {
   const preview = conversationPreview(conversation)
   const sender = conversation.lastMessage?.sender?.displayName
@@ -25,9 +33,7 @@ export default function ConversationListItem({ conversation, currentUserId, onMu
         className="conversation-item__link"
         aria-label={`Abrir conversación con ${conversationTitle(conversation)}`}
       >
-        <span className="conversation-item__avatar" aria-hidden="true">
-          {conversationTitle(conversation).charAt(0).toUpperCase()}
-        </span>
+        <ConversationAvatar conversation={conversation} />
 
         <span className="conversation-item__body">
           <span className="conversation-item__header">

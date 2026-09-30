@@ -1,0 +1,48 @@
+/*
+ * Identidad de una conversación: foto y nombre, como en WhatsApp.
+ *
+ * Se separa de conversation-list.css porque la usan dos pantallas —la lista
+ * y el encabezado del chat— que viven en archivos de estilo distintos, y no
+ * tiene sentido que una dependa de la otra.
+ */
+.conversation-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.conversation-identity__name {
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Grupo: hasta dos fotos superpuestas, como en los chats de grupo de
+ * Instagram. Es el único lugar donde hay más de un avatar, y el recorte a
+ * dos es lo que hace que no se vuelva un collage con seis fotos.
+ */
+.conversation-avatar {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+
+.conversation-avatar__face.is-left {
+  margin-right: -35%;
+}
+
+.conversation-avatar__face.is-right {
+  /* El anillo separa la foto de adelante de la de atrás; sin él las dos
+     imágenes quedan pegadas y no se lee dónde termina una. */
+  box-shadow: 0 0 0 2px var(--color-surface);
+  z-index: 1;
+}
+
+.conversation-avatar--sm .conversation-avatar__face {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: var(--text-xs);
+}

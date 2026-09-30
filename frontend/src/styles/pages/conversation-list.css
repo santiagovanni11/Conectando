@@ -28,18 +28,6 @@
   background: var(--color-accent-wash);
 }
 
-.conversation-item__avatar {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  background: var(--color-accent);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-weight: var(--weight-semibold);
-  flex-shrink: 0;
-}
-
 .conversation-item__body {
   flex: 1;
   min-width: 0;

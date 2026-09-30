@@ -29,6 +29,11 @@
 .conversation-page__title {
   font-size: 1.125rem;
   margin: 0;
+  min-width: 0;
+  /* La identidad lleva foto y nombre, así que el título tiene que ser una
+     fila: sin esto el nombre se iría de la línea al primer nombre largo. */
+  display: flex;
+  align-items: center;
 }
 
 /* Boton de eliminar el chat. Va en tono de peligro porque el gesto borra. */

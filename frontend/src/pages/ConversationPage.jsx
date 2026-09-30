@@ -4,10 +4,10 @@ import { useAuth } from '../hooks/useAuth'
 import { useConversationMessages } from '../hooks/useConversationMessages'
 import { useTypingIndicator } from '../hooks/useTypingIndicator'
 import { deleteConversation, fetchConversations } from '../services/conversationService'
-import { conversationTitle } from '../constants/messages'
 import { ROUTES } from '../constants/routes'
 import MessageThread from '../components/messages/MessageThread'
 import MessageComposer from '../components/messages/MessageComposer'
+import ConversationIdentity from '../components/messages/ConversationIdentity'
 import {
   MessageReplyProvider,
   useMessageReply,
@@ -80,8 +80,15 @@ function ConversationView() {
         >
           Volver
         </button>
+        {/* La identidad va dentro del <h1> para que el encabezado siga
+            siendo el título de la página, y a la vez muestre la foto como
+            en WhatsApp. El avatar es decorativo: el nombre ya está en el
+            texto del encabezado. */}
         <h1 className="conversation-page__title">
-          {conversation ? conversationTitle(conversation) : 'Conversación'}
+          <ConversationIdentity
+            conversation={conversation ?? { peers: [] }}
+            size="sm"
+          />
         </h1>
 
         <button
