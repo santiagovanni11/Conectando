@@ -50,4 +50,17 @@ describe('LoginPage', () => {
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeTruthy()
     expect(screen.getByLabelText(/^Email/)).toBeTruthy()
   })
+
+  it('ofrece la vía para recuperar la contraseña', () => {
+    // Va debajo del campo, no arriba del formulario: es lo que uno busca
+    // cuando ya se equivocó al escribir la clave, no lo que hace falta para
+    // entrar. El enlace vive acá y no dentro de la pantalla de recuperación
+    // para no tener que llegar a ella escribiendo la URL.
+    montarConEstado(undefined)
+
+    expect(screen.getByRole('link', { name: /olvid/i })).toHaveAttribute(
+      'href',
+      '/recuperar',
+    )
+  })
 })

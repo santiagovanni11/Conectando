@@ -8,6 +8,7 @@ export const ROUTES = {
   user: (userId) => `/users/${userId}`,
   friends: '/friends',
   help: '/help',
+  forgotPassword: '/recuperar',
   notifications: '/notifications',
   messages: '/messages',
   conversation: (conversationId) => `/messages/${conversationId}`,

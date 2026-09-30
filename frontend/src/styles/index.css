@@ -42,6 +42,7 @@
 @import './posts/comments-composer.css';
 @import './posts/comments-reply.css';
 @import './pages/auth.css';
+@import './auth/password-reset.css';
 @import './pages/login-split.css';
 @import './pages/home.css';
 @import './pages/friends.css';

@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { authService } from '../services/authService'
+import { ROUTES } from '../constants/routes'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import PasswordInput from '../components/ui/PasswordInput'
@@ -63,6 +64,12 @@ export default function LoginPage() {
         onChange={handleChange}
         required
       />
+
+      {/* Va debajo del campo y no arriba del formulario: es lo que uno busca
+          cuando ya se equivocó, no lo que necesita para entrar. */}
+      <Link className="login-forgot" to={ROUTES.forgotPassword}>
+        ¿Olvidaste tu contraseña?
+      </Link>
       {error && (
         <p className="form-alert" role="alert">
           {error}

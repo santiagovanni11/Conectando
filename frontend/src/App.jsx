@@ -1,4 +1,4 @@
-﻿import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import AppErrorBoundary from './components/AppErrorBoundary'
 import { AuthProvider } from './context/AuthContext'
 import AppLayout from './layouts/AppLayout'
@@ -9,6 +9,7 @@ import GuestRoute from './components/GuestRoute'
 import FeedPage from './pages/FeedPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ProfilePage from './pages/ProfilePage'
 import EditProfilePage from './pages/EditProfilePage'
 import PostDetailPage from './pages/PostDetailPage'
@@ -38,6 +39,16 @@ function App() {
               element={
                 <AuthLayout title="Crear cuenta">
                   <RegisterPage />
+                </AuthLayout>
+              }
+            />
+
+            {/* Junto al login, no suelto. */}
+            <Route
+              path={ROUTES.forgotPassword}
+              element={
+                <AuthLayout title="Recuperar contraseña">
+                  <ForgotPasswordPage />
                 </AuthLayout>
               }
             />
