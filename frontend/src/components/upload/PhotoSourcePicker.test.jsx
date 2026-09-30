@@ -7,13 +7,14 @@ import PhotoSourcePicker from './PhotoSourcePicker'
  * Los inputs de archivo de este selector.
  *
  * En iOS, la hoja de "Cámara / Fototeca / Buscar" aparece en blanco si el
- * input de archivo no está bien en pantalla. Pasaron dos formas de romperla:
- * con `hidden`, y con un input de un píxel que se disparaba con `.click()`
- * desde JavaScript mientras el modal seguía montado.
+ * input de archivo no está bien en pantalla. Pasaron tres formas de romperla:
+ * con `hidden`; con un input de un píxel que se disparaba con `.click()`
+ * desde JavaScript; y con el modal de opciones anidado adentro del modal del
+ * compositor, que se arregla en `Modal`.
  *
  * Estas pruebas no pueden reproducir eso —es comportamiento del sistema—, así
- * que se afirma sobre lo que evita las dos: que el input sea real, que esté
- * montado sobre su opción y que no lo dispare JavaScript.
+ * que se afirma sobre lo que evita las dos primeras: que el input sea real,
+ * que esté montado sobre su opción y que no lo dispare JavaScript.
  */
 const inputs = () => [
   screen.getByTestId('camera-input'),
@@ -58,6 +59,16 @@ describe('PhotoSourcePicker', () => {
       // encuentra el modal todavía montado encima.
       expect(input.closest('.photo-source__option')).not.toBeNull()
     }
+  })
+
+  it('el modal de opciones no queda adentro del que lo abrió', async () => {
+    render(<PhotoSourcePicker trigger={<span>Agregar foto</span>} />)
+    await abrir()
+
+    // Es lo que rompía en el compositor: dos modales anidados, con el de fotos
+    // dentro del `position: fixed` del de publicaciones.
+    const opciones = screen.getByRole('dialog', { name: 'Agregar foto' })
+    expect(opciones.parentElement).toBe(document.body)
   })
 
   it('cada input tiene nombre propio', async () => {

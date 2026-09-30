@@ -1,11 +1,24 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import IconButton from './IconButton'
 
 /**
  * Modal genérico.
  *
+ * <para>
  * El contenido va dentro de `modal__body`, que da el aire y el scroll. Si
  * se mete suelto, el panel queda sin padding y el contenido pegado al borde.
+ *
+ * <para>
+ * Se dibuja en un portal contra el `body` y no donde le toque. No es un
+ * detalle: el compositor de publicaciones es un modal y, al abrir las fotos,
+ * abre otro modal adentro. Con los dos anidados, el de adentro queda dentro
+ * del `position: fixed` del de afuera, y en iOS el panel interior se dibuja
+ * mal. Por eso el selector de fotos salía en blanco.
+ *
+ * <para>
+ * En un portal además el orden en el DOM es el orden en que se ven, así que
+ * el último modal abierto es el de arriba sin depender del `z-index`.
  */
 export default function Modal({ title, children, onClose, className = '' }) {
   useEffect(() => {
@@ -24,7 +37,7 @@ export default function Modal({ title, children, onClose, className = '' }) {
     }
   }, [onClose])
 
-  return (
+  return createPortal(
     <div className="modal" role="dialog" aria-modal="true" aria-label={title}>
       <div className="modal__backdrop" onClick={onClose} />
 
@@ -35,6 +48,7 @@ export default function Modal({ title, children, onClose, className = '' }) {
         </header>
         <div className="modal__body">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

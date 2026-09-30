@@ -66,9 +66,11 @@ describe('BlockConfirmModal', () => {
   it('el contenido va en un cuerpo con padding y scroll', () => {
     // Regresión: el contenido se pegaba al borde del panel y se cortaba
     // sin scroll cuando no entraba, sobre todo en pantallas bajas.
-    const { container } = render(<BlockConfirmModal userName="Ana" onClose={vi.fn()} />)
+    render(<BlockConfirmModal userName="Ana" onClose={vi.fn()} />)
 
-    const body = container.querySelector('.modal__body')
+    // El modal se dibuja en un portal contra el body, no en el contenedor que
+    // devuelve render(). Por eso se busca ahí y no en `container`.
+    const body = document.body.querySelector('.modal__body')
     expect(body).toBeTruthy()
     // El texto está partido por el <strong>, así que se busca un fragmento.
     expect(body?.textContent).toMatch(/seguro que querés bloquear/i)

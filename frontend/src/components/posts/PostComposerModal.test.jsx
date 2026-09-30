@@ -66,11 +66,14 @@ describe('PostComposerModal', () => {
 
   it('el click en el fondo cierra el modal', async () => {
     const user = userEvent.setup()
-    const { container } = render(<PostComposerModal onPublished={() => {}} />)
+    render(<PostComposerModal onPublished={() => {}} />)
 
     await user.click(screen.getByRole('button', { name: /crear una nueva publicación/i }))
     await screen.findByRole('dialog')
-    await user.click(container.querySelector('.modal__backdrop'))
+
+    // El modal se dibuja en un portal contra el body, no en el contenedor que
+    // devuelve render(). Por eso se busca ahí y no en `container`.
+    await user.click(document.body.querySelector('.modal__backdrop'))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
@@ -81,20 +84,23 @@ describe('PostComposerModal', () => {
     // El panel salía como un div común en el flujo de la página: sin fondo,
     // sin overlay, sin sombra y sin centrado, en cualquier pantalla.
     const user = userEvent.setup()
-    const { container } = render(<PostComposerModal onPublished={() => {}} />)
+    render(<PostComposerModal onPublished={() => {}} />)
 
     await user.click(screen.getByRole('button', { name: /crear una nueva publicación/i }))
     const dialog = await screen.findByRole('dialog')
 
-    expect(container.querySelector('.modal')).toBeInTheDocument()
-    expect(container.querySelector('.modal__backdrop')).toBeInTheDocument()
-    expect(container.querySelector('.modal__panel')).toBeInTheDocument()
+    // El modal vive en un portal contra el body: el compositor abre otro modal
+    // adentro al elegir fotos, y anidados en iOS el de adentro se dibuja mal.
+    const raiz = document.body
+    expect(raiz.querySelector('.modal')).toBeInTheDocument()
+    expect(raiz.querySelector('.modal__backdrop')).toBeInTheDocument()
+    expect(raiz.querySelector('.modal__panel')).toBeInTheDocument()
     // La variante alta es la que lo hace ocupar toda la pantalla en celular.
-    expect(container.querySelector('.modal__panel--tall')).toBeInTheDocument()
+    expect(raiz.querySelector('.modal__panel--tall')).toBeInTheDocument()
     expect(dialog).toBeInTheDocument()
 
     // Y no queda rastro de las clases muertas.
-    expect(container.querySelector('[class*="composer-modal"]')).toBeNull()
+    expect(raiz.querySelector('[class*="composer-modal"]')).toBeNull()
   })
 
   it('el disparador muestra la foto y el ícono, no una caja vacía', () => {
