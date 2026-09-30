@@ -31,6 +31,20 @@ public class MailSettings
     /// <summary>Remitente, con formato "Nombre &lt;correo&gt;".</summary>
     public string From { get; set; } = string.Empty;
 
+    /// <summary>
+    /// A dónde llegan las respuestas. Opcional.
+    ///
+    /// <para>
+    /// Sirve para mandar desde un dominio propio y que las respuestas sigan
+    /// yendo a la casilla de verdad. Mandar desde el dominio es lo único que
+    /// hace que Gmail no tire el correo a spam: hace falta poder declarar
+    /// los registros de autenticación, y eso solo se puede sobre un dominio
+    /// que uno tenga. Con un correo de Yahoo o Gmail de consumo no hay
+    /// registro que declarar, y el filtro no tiene por qué dejarlo pasar.
+    /// </para>
+    /// </summary>
+    public string ReplyTo { get; set; } = string.Empty;
+
     /// <summary>Nombre sin correo, para el saludo del mensaje.</summary>
     public string BrandName { get; set; } = "Conectando";
 }

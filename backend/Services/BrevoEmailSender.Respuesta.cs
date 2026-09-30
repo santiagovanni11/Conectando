@@ -41,23 +41,49 @@ public sealed partial class BrevoEmailSender
     }
 
     /// <summary>
-    /// Parte el "From" de la configuración, que viene como "Nombre &lt;correo&gt;".
+    /// A dónde van las respuestas.
+    ///
+    /// <para>
+    /// Devuelve null cuando no está configurado, y el <c>WhenWritingNull</c>
+    /// del serializador lo saca del JSON. Mandarlo vacío sería peor: Brevo
+    /// toma un remitente vacío como válido y las respuestas se pierden.
+    /// </para>
+    /// </summary>
+    private object? ConstruirReplyTo()
+    {
+        if (string.IsNullOrWhiteSpace(_settings.ReplyTo))
+        {
+            return null;
+        }
+
+        var (nombre, correo) = Separar(_settings.ReplyTo);
+
+        return new { name = nombre, email = correo };
+    }
+
+    /// <summary>Parte el "From" de la configuración, que viene como "Nombre &lt;correo&gt;".</summary>
+    private (string Nombre, string Correo) SepararRemitente() => Separar(_settings.From);
+
+    /// <summary>
+    /// Parte una dirección con formato "Nombre &lt;correo&gt;".
+    ///
+    /// <para>
     /// Si no trae los ángulos se usa tal cual: hay gente que pega solo la
     /// dirección y romper ahí sería tirar abajo el envío por un detalle de
     /// formato.
+    /// </para>
     /// </summary>
-    private (string Nombre, string Correo) SepararRemitente()
+    private static (string Nombre, string Correo) Separar(string valor)
     {
-        var from = _settings.From;
-        var abre = from.IndexOf('<');
-        var cierra = from.IndexOf('>');
+        var abre = valor.IndexOf('<');
+        var cierra = valor.IndexOf('>');
 
         if (abre < 0 || cierra < abre)
         {
-            return (from, from);
+            return (valor, valor);
         }
 
-        return (from[..abre].Trim(), from[(abre + 1)..cierra].Trim());
+        return (valor[..abre].Trim(), valor[(abre + 1)..cierra].Trim());
     }
 
     /// <summary>Recorta el detalle: puede traer HTML largo y no sirve de más.</summary>

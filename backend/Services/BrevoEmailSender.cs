@@ -101,6 +101,14 @@ public sealed partial class BrevoEmailSender(
         return new
         {
             sender = new { name = nombre, email = correo },
+
+            // Sin replyTo, el "Responder" le llega a la dirección técnica del
+            // dominio. Con ReplyTo sigue yendo a la casilla de verdad. Es lo
+            // que hace posible mandar desde un dominio —que es lo único que
+            // pasa los filtros de Gmail— sin perder los correos que
+            // alguien conteste.
+            replyTo = ConstruirReplyTo(),
+
             to = new[] { new { email = message.To } },
             subject = message.Subject,
             htmlContent = message.HtmlBody,

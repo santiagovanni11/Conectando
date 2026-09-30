@@ -17,10 +17,14 @@ namespace Conectando.Api.Tests;
 /// afirmar nada sin gastarse el envío, y justo lo que importa acá —que la
 /// clave no viaje en la URL, que el remitente se separe bien del nombre— se
 /// verifica sin mandar nada.
+///
+/// <see cref="Mensaje"/> y <see cref="Crear"/> son compartidos con
+/// <see cref="BrevoEmailSenderRespuestasTests"/>: el mensaje de prueba y la
+/// forma de armar el remitente son los mismos en los dos casos.
 /// </summary>
-public sealed class BrevoEmailSenderTests
+public sealed partial class BrevoEmailSenderTests
 {
-    private static readonly EmailMessage Mensaje = new(
+    internal static readonly EmailMessage Mensaje = new(
         "alguien@ejemplo.com",
         "Tu código",
         "<p>Hola</p>",
@@ -129,13 +133,14 @@ public sealed class BrevoEmailSenderTests
         Assert.Contains("Key not found", error.Message);
     }
 
-    private static BrevoEmailSender Crear(
+    internal static BrevoEmailSender Crear(
         HttpMessageHandler handler,
         string apiKey,
         string from,
-        ILogger<BrevoEmailSender>? log = null) =>
+        ILogger<BrevoEmailSender>? log = null,
+        string replyTo = "") =>
         new(
             new HttpClient(handler),
-            new MailSettings { ApiKey = apiKey, From = from },
+            new MailSettings { ApiKey = apiKey, From = from, ReplyTo = replyTo },
             log ?? NullLogger<BrevoEmailSender>.Instance);
 }
