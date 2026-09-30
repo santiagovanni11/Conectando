@@ -19,6 +19,29 @@ public partial class PasswordResetService
 {
     private const int MinutosDeVigencia = 15;
 
+    /// <summary>
+    /// Pistas para el usuario, escritas una sola vez.
+    ///
+    /// <para>
+    /// Van en una lista y no repetidas en cada versión del mensaje a propósito:
+    /// el correo sale dos veces, en HTML y en texto plano, y copiar la misma
+    /// frase en los dos lugares es la forma segura de que se desincronicen.
+    /// Con la lista, agregar una pista es agregar una línea y las dos
+    /// versiones la muestran.
+    /// </para>
+    ///
+    /// <para>
+    /// La del spam está porque el correo sale desde una casilla de consumo y
+    /// los filtros lo mandan a spam seguido. Avisarlo evita el peor escenario
+    /// posible: que la persona pida el código otra vez, espere un correo que
+    /// ya llegó, y siga sin verlo.
+    /// </para>
+    /// </summary>
+    private static readonly string[] Pistas =
+    [
+        "Si no lo encontrás, revisá la carpeta de spam o promociones: a veces el correo llega ahí.",
+    ];
+
     private EmailMessage ConstruirMensaje(string destinatario, string codigo) =>
         ConstruirMensaje(destinatario, codigo, _email.IsConfigured);
 
@@ -39,6 +62,7 @@ public partial class PasswordResetService
           </p>
           <p>Vence en {MinutosDeVigencia} minutos y sirve una sola vez.</p>
           {AvisoSinEnvio(enviado)}
+          {PistasHtml()}
           <p style="color:#5b6770;font-size:.875rem;margin-top:2rem">
             Si no pediste esto, no hagas nada: nadie puede cambiar tu contraseña
             con este correo solo.
@@ -53,9 +77,17 @@ public partial class PasswordResetService
 
         Vence en {MinutosDeVigencia} minutos y sirve una sola vez.
         {(enviado ? string.Empty : "ATENCIÓN: el envío no está configurado, este código se está mostrando solo en el servidor.")}
+        {PistasTexto()}
 
         Si no pediste esto, no hagas nada: nadie puede cambiar tu contraseña con este correo solo.
         """;
+
+    /// <summary>Las pistas para la versión con formato.</summary>
+    private static string PistasHtml() =>
+        $"<p style=\"color:#5b6770;font-size:.875rem\">{string.Join(" ", Pistas)}</p>";
+
+    /// <summary>Las mismas pistas para la versión de texto plano.</summary>
+    private static string PistasTexto() => string.Join(Environment.NewLine, Pistas);
 
     /// <summary>
     /// Aviso solo cuando el correo no llegó. Es una red de seguridad: si el

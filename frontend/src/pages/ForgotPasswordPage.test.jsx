@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import ForgotPasswordPage from './ForgotPasswordPage'
+import AuthLayout from '../layouts/AuthLayout'
 import { passwordResetService } from '../services/passwordResetService'
 
 vi.mock('../services/passwordResetService', () => ({
@@ -45,6 +46,24 @@ beforeEach(() => {
 })
 
 describe('ForgotPasswordPage', () => {
+  it('no repite el título que ya pone el layout', () => {
+    // Se monta con el layout porque es como está en la app: el título lo
+    // pone AuthLayout, como en el login y el registro. Montada sola, la
+    // página no tenía el título repetido y el test no lo veía.
+    render(
+      <MemoryRouter>
+        <AuthLayout title="Recuperar contraseña">
+          <ForgotPasswordPage />
+        </AuthLayout>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Recuperar contraseña',
+    )
+  })
+
   it('empieza pidiendo el correo', () => {
     renderPage()
 

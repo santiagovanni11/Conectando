@@ -24,10 +24,9 @@ export default function ForgotPasswordPage() {
 
   return (
     <section className="password-reset">
-      <header className="password-reset__header">
-        <h1 className="password-reset__title">Recuperar contraseña</h1>
-      </header>
-
+      {/* Sin encabezado propio: el título lo pone el AuthLayout que envuelve
+          a esta página, como en el login y el registro. Ponerlo acá también
+          lo duplicaba en pantalla. */}
       {step === 'correo' ? (
         <RequestCodeStep
           busy={busy}
