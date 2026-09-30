@@ -91,3 +91,21 @@
   margin: 0;
   font-size: var(--text-sm);
 }
+
+/*
+ * Detalle tecnico del error capturado por AppErrorBoundary.
+ *
+ * Monoespaciada y en tono suave a proposito: tiene que leerse como
+ * diagnostico, no competir con el aviso principal. Se muestra para que
+ * un error de runtime se pueda reportar sin herramientas, que es
+ * justo cuando hace falta.
+ */
+.app-error-boundary__detail {
+  margin: 0;
+  padding: 0 1.5rem 2rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
