@@ -58,7 +58,7 @@ export default function RegisterPage() {
   if (created) return <RegisterSuccess />
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form className="auth-form" onSubmit={handleSubmit} noValidate>
       <Input
         name="userName"
         label="Nombre de usuario"

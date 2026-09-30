@@ -20,6 +20,12 @@
   transform: translateY(1px);
 }
 
+/* Ancho completo. El prop `block` se pedía en 18 lugares de la app y no
+   existía: el botón quedaba con el ancho de su etiqueta. */
+.btn--block {
+  width: 100%;
+}
+
 .btn:disabled {
   cursor: not-allowed;
   opacity: 0.55;

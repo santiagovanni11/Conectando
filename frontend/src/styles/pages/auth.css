@@ -41,6 +41,24 @@
   color: var(--color-ink-soft);
 }
 
+/*
+ * Formulario de acceso y de registro.
+ *
+ * La columna con `gap` es lo que hace que el botón y el enlace de recuperar
+ * queden uno debajo del otro. Sin esto, el <form> es un bloque pelado: los
+ * campos se apilan porque cada <input> es de bloque, pero el botón —que es
+ * inline-flex— y el enlace se alinean en la misma línea, separados por un
+ * espacio.
+ *
+ * El mismo papel lo cumple `.password-reset__form` en los dos pasos de la
+ * recuperación.
+ */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .auth-footer {
   display: flex;
   gap: var(--space-3);

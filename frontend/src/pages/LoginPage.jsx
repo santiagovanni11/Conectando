@@ -39,7 +39,7 @@ export default function LoginPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form className="auth-form" onSubmit={handleSubmit} noValidate>
       {notice && (
         <p className="form-alert form-alert--success" role="status">
           {notice}

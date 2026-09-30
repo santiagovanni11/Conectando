@@ -68,4 +68,14 @@ describe('LoginPage', () => {
 
     expect(hijos.indexOf(enlace)).toBeGreaterThan(boton)
   })
+
+  it('el formulario es una columna, no una fila', () => {
+    // Regresión: el <form> no tenía clase, así que era un bloque pelado. Los
+    // campos se apilaban porque cada input es de bloque, pero el botón y el
+    // enlace quedaban en la misma línea. Con el orden del DOM correcto y el
+    // formulario sin columna, visualmente seguían al lado.
+    const { container } = montarConEstado(undefined)
+
+    expect(container.querySelector('form')).toHaveClass('auth-form')
+  })
 })
