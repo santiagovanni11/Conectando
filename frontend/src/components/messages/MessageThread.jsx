@@ -61,25 +61,24 @@ export default function MessageThread({
         </button>
       )}
 
-      {/* El <ul> es el contenedor en columna: por eso cada mensaje debe
-          ser un <li> propio y no quedar anidado dentro de otro. */}
+      {/* Cada mensaje es su propio <li>, y lo aporta MessageThreadRow: por
+          eso el <ul> queda en columna sin anidar. */}
       <ul className="message-thread">
         {messages.map((message) => (
-          <li key={message.id} className="message-thread__item">
-            <MessageThreadRow
-              message={message}
-              isOwn={message.sender?.id === currentUserId}
-              isEditing={editingId === message.id}
-              error={editingId === message.id ? actionError : ''}
-              draft={draft}
-              onDraftChange={setDraft}
-              onStartEdit={() => startEditing(message)}
-              onCancelEdit={() => setEditingId(null)}
-              onSaveEdit={() => saveEdit(message.id)}
-              onDelete={onDelete}
-              onReply={onReply}
-            />
-          </li>
+          <MessageThreadRow
+            key={message.id}
+            message={message}
+            isOwn={message.sender?.id === currentUserId}
+            isEditing={editingId === message.id}
+            error={editingId === message.id ? actionError : ''}
+            draft={draft}
+            onDraftChange={setDraft}
+            onStartEdit={() => startEditing(message)}
+            onCancelEdit={() => setEditingId(null)}
+            onSaveEdit={() => saveEdit(message.id)}
+            onDelete={onDelete}
+            onReply={onReply}
+          />
         ))}
       </ul>
     </>

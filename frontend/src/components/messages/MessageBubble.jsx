@@ -7,8 +7,8 @@ import { DELETED_PLACEHOLDER } from '../../constants/messages'
  * Burbuja de un mensaje. Alineada a la derecha si es propia.
  *
  * Es un <div> y no un <li> a propósito: el <li> de la fila lo aporta
- * MessageThread. Dos <li> anidados no son HTML válido y el flex del hilo
- * los dejaba todos en una misma línea.
+ * MessageThreadRow. Dos <li> anidados no son HTML válido y el flex del
+ * hilo los dejaba todos en una misma línea.
  *
  * Un mensaje borrado no muestra su texto ni menú de edición: se reemplaza
  * por un aviso, igual que en WhatsApp. Tampoco acepta respuestas ni gesto

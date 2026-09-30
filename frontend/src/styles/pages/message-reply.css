@@ -3,54 +3,49 @@
    tope del tamaño de módulo y estas reglas no son suyas. */
 
 /*
- * Fila con gesto. El desplazamiento se inyecta desde React como --swipe y la
- * transición hace que la burbuja vuelva sola al soltarla. `pan-y` deja el
- * scroll vertical en manos del navegador: sin esto, en móvil el hilo deja de
- * poder desplazarse con el dedo.
+ * Gesto de deslizar. El desplazamiento se inyecta desde React como --swipe y
+ * se aplica al <li> de la fila, que ya existía: no se mete ningún envoltorio
+ * entre la fila y la burbuja, porque eso le cambiaba el bloque contenedor a la
+ * burbuja y su `max-width: 75%` se encogía.
+ *
+ * `pan-y` deja el scroll vertical en manos del navegador: sin esto, en móvil
+ * el hilo deja de poder desplazarse con el dedo.
+ *
+ * No lleva `overflow: hidden` a propósito: el desplegable del menú de tres
+ * puntitos cuelga de la fila, y recortarlo lo volvía invisible.
  */
-.message-row {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  overflow: hidden;
-  border-radius: 1rem;
+.message-thread__item {
   touch-action: pan-y;
-}
-
-.message-row__content {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-1);
-  min-width: 0;
   transform: translateX(var(--swipe, 0px));
   transition: transform 180ms ease-out;
 }
 
 /* Mientras se arrastra no hay transición: tiene que seguir el dedo. */
-.message-row__content:active {
+.message-thread__item:active {
   transition: none;
 }
 
 /*
- * La flecha queda detrás, del lado hacia el que corre la burbuja. Su opacidad
- * acompaña al desplazamiento, así que aparece a medida que el gesto se vuelve
- * undeniable.
+ * La flecha queda en el hueco que deja la burbuja al correrse. Como la fila
+ * invierte el orden para los mensajes propios, la flecha va al lado
+ * contrario en cada caso; con :has se resuelve sin tocar el marcado.
  */
 .message-row__hint {
   position: absolute;
-  right: 0.75rem;
-  display: flex;
-  align-items: center;
+  font-size: 1.25rem;
+  line-height: 1;
   color: var(--color-ink-soft);
   opacity: calc(var(--swipe, 0px) / 44);
   pointer-events: none;
+  flex: none;
 }
 
-.message-row__hint .icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  stroke-width: 2;
+.message-thread__item:not(:has(.is-own)) .message-row__hint {
+  right: 0.75rem;
+}
+
+.message-thread__item:has(.is-own) .message-row__hint {
+  left: 0.75rem;
 }
 
 /* Cita dentro de la respuesta. */
