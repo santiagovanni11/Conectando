@@ -3,6 +3,8 @@ using System.Text.Json;
 using Conectando.Api.Interfaces;
 using Conectando.Api.Services;
 using Conectando.Api.Settings;
+using Conectando.Api.Tests.TestInfrastructure;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Conectando.Api.Tests;
@@ -27,7 +29,7 @@ public sealed class BrevoEmailSenderTests
     [Fact]
     public async Task Manda_a_la_api_con_la_clave_en_la_cabecera()
     {
-        var handler = new HandlerFalso(HttpStatusCode.Created);
+        var handler = new FakeHttpHandler(HttpStatusCode.Created);
         var sender = Crear(handler, "xkeysib-123", "Conectando <no-reply@ejemplo.com>");
 
         await sender.SendAsync(Mensaje);
@@ -43,7 +45,7 @@ public sealed class BrevoEmailSenderTests
     [Fact]
     public async Task Parte_el_remitente_en_nombre_y_correo()
     {
-        var handler = new HandlerFalso(HttpStatusCode.Created);
+        var handler = new FakeHttpHandler(HttpStatusCode.Created);
         var sender = Crear(handler, "clave", "Conectando <no-reply@ejemplo.com>");
 
         await sender.SendAsync(Mensaje);
@@ -56,7 +58,7 @@ public sealed class BrevoEmailSenderTests
     [Fact]
     public async Task Acepta_un_remitente_sin_nombre()
     {
-        var handler = new HandlerFalso(HttpStatusCode.Created);
+        var handler = new FakeHttpHandler(HttpStatusCode.Created);
         var sender = Crear(handler, "clave", "no-reply@ejemplo.com");
 
         await sender.SendAsync(Mensaje);
@@ -70,7 +72,7 @@ public sealed class BrevoEmailSenderTests
     [Fact]
     public async Task Manda_el_codigo_para_que_lo_reciba_el_usuario()
     {
-        var handler = new HandlerFalso(HttpStatusCode.Created);
+        var handler = new FakeHttpHandler(HttpStatusCode.Created);
         var sender = Crear(handler, "clave", "Conectando <no-reply@ejemplo.com>");
 
         await sender.SendAsync(Mensaje);
@@ -83,7 +85,7 @@ public sealed class BrevoEmailSenderTests
     [Fact]
     public async Task Sin_clave_no_rompe_nada()
     {
-        var handler = new HandlerFalso(HttpStatusCode.Created);
+        var handler = new FakeHttpHandler(HttpStatusCode.Created);
         var sender = Crear(handler, string.Empty, "Conectando <no-reply@ejemplo.com>");
 
         await sender.SendAsync(Mensaje);
@@ -94,9 +96,26 @@ public sealed class BrevoEmailSenderTests
     }
 
     [Fact]
+    public async Task Anota_el_identificador_del_envio()
+    {
+        var handler = new FakeHttpHandler(
+            HttpStatusCode.Created,
+            """{"messageId":"<abc123@smtp-relay.brevo.com>"}""");
+        var log = new FakeLogger<BrevoEmailSender>();
+        var sender = Crear(handler, "clave", "Conectando <no-reply@ejemplo.com>", log);
+
+        // El identificador es lo único que deja seguir el envío en los
+        // registros de Brevo cuando el correo no llega. Sin esto, desde el
+        // log no se distingue "aceptado" de "entregado".
+        await sender.SendAsync(Mensaje);
+
+        Assert.Contains(log.Mensajes, m => m.Contains("<abc123@smtp-relay.brevo.com>", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task El_error_de_brevo_dice_la_causa()
     {
-        var handler = new HandlerFalso(
+        var handler = new FakeHttpHandler(
             HttpStatusCode.Unauthorized,
             """{"code":"unauthorized","message":"Key not found"}""");
         var sender = Crear(handler, "clave-vencida", "Conectando <no-reply@ejemplo.com>");
@@ -113,37 +132,10 @@ public sealed class BrevoEmailSenderTests
     private static BrevoEmailSender Crear(
         HttpMessageHandler handler,
         string apiKey,
-        string from) =>
+        string from,
+        ILogger<BrevoEmailSender>? log = null) =>
         new(
             new HttpClient(handler),
             new MailSettings { ApiKey = apiKey, From = from },
-            NullLogger<BrevoEmailSender>.Instance);
-
-    /// <summary>
-    /// Anota lo que le llega y contesta lo que se le pida, sin tocar la red.
-    /// </summary>
-    private sealed class HandlerFalso(HttpStatusCode status, string? cuerpo = null)
-        : HttpMessageHandler
-    {
-        public string? UltimaUrl { get; private set; }
-
-        public string? CabeceraApiKey { get; private set; }
-
-        public string? Cuerpo { get; private set; }
-
-        protected override async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request,
-            CancellationToken cancellationToken)
-        {
-            UltimaUrl = request.RequestUri?.ToString();
-            request.Headers.TryGetValues("api-key", out var valores);
-            CabeceraApiKey = valores?.SingleOrDefault();
-            Cuerpo = await request.Content!.ReadAsStringAsync(cancellationToken);
-
-            return new HttpResponseMessage(status)
-            {
-                Content = new StringContent(cuerpo ?? string.Empty),
-            };
-        }
-    }
+            log ?? NullLogger<BrevoEmailSender>.Instance);
 }

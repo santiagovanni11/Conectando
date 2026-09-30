@@ -21,7 +21,7 @@ namespace Conectando.Api.Services;
 /// configurado. Si algún día cambia, lo único que se toca es el cuerpo de
 /// <see cref="SendAsync"/>; el resto de la app no se entera de nada.
 /// </summary>
-public sealed class BrevoEmailSender(
+public sealed partial class BrevoEmailSender(
     HttpClient http,
     MailSettings settings,
     ILogger<BrevoEmailSender> logger) : IEmailSender
@@ -69,9 +69,15 @@ public sealed class BrevoEmailSender(
 
         if (respuesta.IsSuccessStatusCode)
         {
+            // Brevo devuelve un messageId. Es el único dato que permite
+            // seguir un envío concreto en sus registros cuando el correo no
+            // llega, así que queda anotado. "Enviado" solo quiere decir que
+            // Brevo lo aceptó: de acá en más decides Gmail, Yahoo y la
+            // reputación del remitente, y nada de eso se ve desde acá.
             _logger.LogInformation(
-                "Correo enviado a {Destinatario}: {Asunto}",
+                "Correo aceptado por Brevo para {Destinatario} ({MessageId}): {Asunto}",
                 message.To,
+                await LeerMessageId(respuesta, cancellationToken),
                 message.Subject);
 
             return;
@@ -101,28 +107,4 @@ public sealed class BrevoEmailSender(
             textContent = message.TextBody,
         };
     }
-
-    /// <summary>
-    /// Parte el "From" de la configuración, que viene como "Nombre &lt;correo&gt;".
-    /// Si no trae los ángulos, se usa tal cual: hay gente que pega solo la
-    /// dirección y romper ahí sería tirar abajo el envío por un detalle de
-    /// formato.
-    /// </summary>
-    private (string Nombre, string Correo) SepararRemitente()
-    {
-        var from = _settings.From;
-        var abre = from.IndexOf('<');
-        var cierra = from.IndexOf('>');
-
-        if (abre < 0 || cierra < abre)
-        {
-            return (from, from);
-        }
-
-        return (from[..abre].Trim(), from[(abre + 1)..cierra].Trim());
-    }
-
-    /// <summary>Recorta el detalle: puede traer HTML largo y no sirve de más.</summary>
-    private static string Recortar(string detalle) =>
-        detalle.Length <= 400 ? detalle : detalle[..400];
 }
