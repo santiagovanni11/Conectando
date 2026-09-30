@@ -1,3 +1,35 @@
+/*
+ * Input de archivo que no se ve pero sigue dibujándose.
+ *
+ * <para>
+ * No es un `hidden` ni un `display: none` a propósito. En iOS, si el input de
+ * archivo está oculto, el menú de "Cámara / Fototeca /Buscar" se abre en
+ * blanco: las opciones existen pero no se ven, y no hay forma de elegir. Es un
+ * comportamiento del sistema, no un problema de estilos.
+ *
+ * <para>
+ * La salida es dejar el input en pantalla con tamaño de un píxel y recortado.
+ * El elemento sigue teniendo caja y participa del render, que es lo que iOS
+ * necesita, pero no ocupa lugar ni se ve.
+ *
+ * <para>
+ * El `clip` viene con su `clip-path` porque el primero está marcado como
+ * obsoleto y algunos navegadores ya lo ignoran; con el segundo solo, el input
+ * se vería como una franja de un píxel en algunos equipos.
+ */
+.photo-source__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---------- Selector de cámara / fototeca ---------- */
 
 .photo-source {
