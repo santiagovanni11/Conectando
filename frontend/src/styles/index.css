@@ -26,9 +26,9 @@
 @import './social/report-modal.css';
 @import './social/block-confirm.css';
 @import './posts/list.css';
-@import './posts/composer.css';
+@import './posts/composer-trigger.css';
+@import './posts/composer-form.css';
 @import './posts/composer-media.css';
-@import './posts/composer-responsive.css';
 @import './posts/card.css';
 @import './posts/card-header.css';
 @import './posts/gallery.css';

@@ -1,80 +1,57 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+import Modal from '../ui/Modal'
 import PostComposerForm from './PostComposerForm'
-import IconButton from '../ui/IconButton'
+import PostComposerTrigger from './PostComposerTrigger'
 import { useAuth } from '../../hooks/useAuth'
 
+/**
+ * Publicar: el disparador del feed y el modal donde se escribe.
+ *
+ * Arma el `Modal` de la casa en vez de uno propio. Antes llevaba clases
+ * `composer-modal__*` que no existían en ningún archivo de estilos —solo
+ * había reglas de móvil— así que el panel salía como un div común en el
+ * flujo de la página: sin fondo, sin overlay, sin sombra y sin centrado, en
+ * cualquier pantalla. Reusar el primitivo le trae de una el overlay, el
+ * centrado, el cierre con Escape y con el fondo, el bloqueo del scroll de
+ * fondo, las medidas que se adaptan al móvil y el espacio seguro del notch.
+ *
+ * `--tall` porque el compositor es más alto que un modal normal: lleva área
+ * de texto, grilla de fotos y pie. En celular ocupa toda la pantalla, que es
+ * lo que hacen las demás apps, en vez de una hoja abajo con el contenido
+ * apretado contra el teclado.
+ */
 export default function PostComposerModal({ onPublished }) {
   const { user } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
-  // El modal es dueño de su estado: cerrar siempre es local.
-  function handleClose() {
-    setIsOpen(false)
-  }
-
-  useEffect(() => {
-    if (!isOpen) return undefined
-
-    function handleKeyDown(event) {
-      if (event.key === 'Escape') setIsOpen(false)
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen])
+  const close = useCallback(() => setIsOpen(false), [])
 
   function handlePublished(post) {
     setIsOpen(false)
     onPublished?.(post)
   }
 
+  const displayName = user?.displayName ?? user?.userName ?? ''
+
   return (
     <>
-      <button
-        type="button"
-        className="composer-trigger"
+      <PostComposerTrigger
+        displayName={displayName}
+        avatarSrc={user?.profileImageUrl}
         onClick={() => setIsOpen(true)}
-        aria-label="Crear una nueva publicación"
-      >
-        <span className="composer-trigger__prompt">
-          ¿Qué estás pensando, {user?.displayName ?? user?.userName}?
-        </span>
-      </button>
+      />
 
-      {isOpen && <PostComposerModalBody onPublished={handlePublished} onClose={handleClose} />}
+      {isOpen && (
+        <Modal title="Crear publicación" onClose={close} className="modal__panel--tall">
+          <PostComposerForm
+            avatarName={user?.displayName}
+            avatarSrc={user?.profileImageUrl}
+            onPublished={handlePublished}
+            onCancel={close}
+            autoFocus
+          />
+        </Modal>
+      )}
     </>
-  )
-}
-
-function PostComposerModalBody({ onPublished, onClose }) {
-  const { user } = useAuth()
-
-  useEffect(() => {
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = previousOverflow
-    }
-  }, [])
-
-  return (
-    <div className="composer-modal" role="dialog" aria-modal="true" aria-label="Crear publicación">
-      <div className="composer-modal__backdrop" onClick={onClose} />
-
-      <div className="composer-modal__panel">
-        <header className="composer-modal__header">
-          <h2 className="composer-modal__title">Crear publicación</h2>
-          <IconButton name="close" label="Cerrar" onClick={onClose} />
-        </header>
-
-        <PostComposerForm
-          avatarName={user?.displayName}
-          avatarSrc={user?.profileImageUrl}
-          onPublished={onPublished}
-          onCancel={onClose}
-          autoFocus
-        />
-      </div>
-    </div>
   )
 }

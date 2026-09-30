@@ -1,0 +1,65 @@
+/* ---------- Disparador: la tarjeta que invita a escribir ---------- */
+
+/*
+ * Es un <button> entero: avatar, prompt e ícono son una sola acción. Antes
+ * era un recuadro vacío con el texto suelto y sin foto, que se leía como un
+ * placeholder roto en lugar de como algo que se puede tocar.
+ */
+.composer-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    box-shadow var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.composer-trigger:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent);
+}
+
+/* El foco tiene que verse aunque el navegador no lo dibuje. */
+.composer-trigger:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+/*
+ * El prompt crece y el prompt se recorta, no al revés: sin min-width: 0 un
+ * nombre muy largo estira la fila y empuja el ícono fuera de la pantalla.
+ */
+.composer-trigger__prompt {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-ink-soft);
+  font-size: var(--text-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer-trigger__photo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  color: var(--color-accent-strong);
+  background-color: var(--color-accent-wash);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.composer-trigger:hover .composer-trigger__photo {
+  background-color: var(--color-accent);
+  color: #fff;
+}

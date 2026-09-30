@@ -70,9 +70,44 @@ describe('PostComposerModal', () => {
 
     await user.click(screen.getByRole('button', { name: /crear una nueva publicación/i }))
     await screen.findByRole('dialog')
-    await user.click(container.querySelector('.composer-modal__backdrop'))
+    await user.click(container.querySelector('.modal__backdrop'))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('reusa el modal de la casa y no uno propio sin estilos', async () => {
+    // Regresión: el compositor llevaba clases `composer-modal__*` que no
+    // existían en ningún archivo de estilos —solo había reglas de móvil—.
+    // El panel salía como un div común en el flujo de la página: sin fondo,
+    // sin overlay, sin sombra y sin centrado, en cualquier pantalla.
+    const user = userEvent.setup()
+    const { container } = render(<PostComposerModal onPublished={() => {}} />)
+
+    await user.click(screen.getByRole('button', { name: /crear una nueva publicación/i }))
+    const dialog = await screen.findByRole('dialog')
+
+    expect(container.querySelector('.modal')).toBeInTheDocument()
+    expect(container.querySelector('.modal__backdrop')).toBeInTheDocument()
+    expect(container.querySelector('.modal__panel')).toBeInTheDocument()
+    // La variante alta es la que lo hace ocupar toda la pantalla en celular.
+    expect(container.querySelector('.modal__panel--tall')).toBeInTheDocument()
+    expect(dialog).toBeInTheDocument()
+
+    // Y no queda rastro de las clases muertas.
+    expect(container.querySelector('[class*="composer-modal"]')).toBeNull()
+  })
+
+  it('el disparador muestra la foto y el ícono, no una caja vacía', () => {
+    // Antes era un recuadro con el texto suelto y sin foto, y se leía como
+    // un placeholder roto en lugar de como algo que se puede tocar.
+    useAuth.mockReturnValue({
+      user: { displayName: 'Agustín', userName: 'agustin', profileImageUrl: '/a.jpg' },
+    })
+
+    const { container } = render(<PostComposerModal onPublished={() => {}} />)
+
+    expect(container.querySelector('.composer-trigger__photo')).toBeInTheDocument()
+    expect(container.querySelector('.composer-trigger .avatar')).toBeInTheDocument()
   })
 
   it('al publicar avisa y cierra', async () => {

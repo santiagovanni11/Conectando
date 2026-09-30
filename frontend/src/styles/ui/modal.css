@@ -97,3 +97,32 @@
     max-height: 100dvh;
   }
 }
+
+/* ---------- Variante alta: el compositor de publicaciones ---------- */
+
+/*
+ * El compositor lleva área de texto, grilla de fotos y pie, así que no
+ * entra cómodo en una hoja abajo. En celular ocupa toda la pantalla, que
+ * es lo que hacen las demás apps: el contenido se desplaza dentro en vez
+ * de quedar apretado contra el teclado.
+ *
+ * También anula el padding del cuerpo porque el formulario trae el suyo.
+ * Sin esto se suman los dos y el contenido queda metido para adentro.
+ */
+.modal__panel--tall {
+  width: min(34rem, 100%);
+  max-height: min(92dvh, 46rem);
+}
+
+.modal__panel--tall .modal__body {
+  padding: 0;
+}
+
+@media (max-width: 639px) {
+  .modal__panel--tall {
+    width: 100%;
+    max-height: none;
+    height: 100dvh;
+    border-radius: 0;
+  }
+}
