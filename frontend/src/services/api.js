@@ -23,23 +23,29 @@ export async function apiRequest(path, { method = 'GET', body } = {}) {
     body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
   })
 
-  // Un 204 no tiene cuerpo y es una respuesta legítima: esos endpoints
-  // existen justamente para confirmar sin devolver nada.
-  const vacio = response.status === 204
-
+  /*
+   * Se lee el cuerpo como texto y recién después se interpreta.
+   *
+   * La regla es por contenido, no por código de estado: un 202 Accepted
+   * —que es lo que devuelve "te mandamos el código"— llega con el cuerpo
+   * vacío igual que un 204, y los dos son respuestas válidas de una
+   * operación que no devuelve nada. Distinguir por el status obligaba a
+   * enumerar uno por uno los que llegan vacíos, y el que se olvidara rompía.
+   *
+   * Lo que sí es una respuesta rota es un cuerpo con contenido que no es
+   * JSON: suele ser el proxy devolviendo una página de error o de
+   * "despierta" cuando el servicio vuelve de una suspensión. Eso se
+   * reporta acá para que cada consumidor lo trate con el try/catch que ya
+   * tiene, en vez de recibir un null y reventar al leer una propiedad.
+   */
+  const texto = await response.text()
+  const tieneCuerpo = texto.trim().length > 0
   let data = null
-  try {
-    data = await response.json()
-  } catch {
-    if (!vacio) {
-      // Un 2xx con cuerpo que no es JSON no es una respuesta válida: suele
-      // ser el proxy devolviendo una página de error o de "despierta",
-      // que pasa cuando el servicio vuelve de una suspensión.
-      //
-      // Antes se devolvía `null` como si fuera un resultado, y cada
-      // consumidor que hacía `data.algo` reventaba en un pantalla
-      // distinta, muy lejos de la causa. Romper acá deja que el
-      // try/catch que ya tiene cada consumidor lo trate como lo que es.
+
+  if (tieneCuerpo) {
+    try {
+      data = JSON.parse(texto)
+    } catch {
       throw new ApiError(
         `Respuesta ilegible del servidor (HTTP ${response.status})`,
         response.status,
