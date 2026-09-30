@@ -23,6 +23,19 @@ public static partial class ServiceCollectionExtensions
                     "StorageQuota:MaxBytesPerUser tiene que ser mayor a cero.")
                 .ValidateOnStart();
 
+        // El correo no se valida al arrancar a propósito. Si faltara una
+        // variable, la app tiene que igual a levantar y a servir: el flujo
+        // de recuperación cae en modo prueba, que deja el código en el log.
+        // Levantarla sin correo no debería dejar la app entera sin usar.
+        //
+        // Se registra el objeto y no IOptions<> porque MailSettings es una
+        // foto de la configuración, no algo que se recargue en caliente.
+        // Quien la recibe solo lee, y así nadie tiene que desempacar .Value.
+        var mail = configuration.GetSection(MailSettings.SectionName).Get<MailSettings>() ?? new MailSettings();
+        services.AddSingleton(mail);
+        services.AddSingleton<IEmailSender, SmtpEmailSender>();
+        services.AddScoped<IPasswordResetService, PasswordResetService>();
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IJwtService, JwtService>();
@@ -62,6 +75,7 @@ services.AddScoped<IPagePreviewService, PagePreviewService>();
         services.AddScoped<IStorageQuotaService, StorageQuotaService>();
         services.AddScoped<IMediaCleaner, MediaCleaner>();
         services.AddSingleton<IMediaStorage, CloudinaryMediaStorage>();
+
         return services;
     }
 }

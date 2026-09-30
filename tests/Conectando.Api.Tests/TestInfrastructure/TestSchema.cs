@@ -25,6 +25,7 @@ public static partial class TestSchema
         DROP TABLE IF EXISTS "follows" CASCADE;
         DROP TABLE IF EXISTS "friend_requests" CASCADE;
         DROP TABLE IF EXISTS "friendships" CASCADE;
+        DROP TABLE IF EXISTS "password_reset_codes" CASCADE;
         DROP TABLE IF EXISTS "users" CASCADE;
         """;
 

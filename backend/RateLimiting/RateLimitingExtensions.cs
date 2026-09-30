@@ -12,6 +12,7 @@ public static class RateLimitPolicies
     public const string Reads = "reads";
     public const string Login = "login";
     public const string Uploads = "uploads";
+    public const string PasswordReset = "password-reset";
 }
 
 /// <summary>
@@ -60,6 +61,20 @@ public static class RateLimitingExtensions
                 limiter.Window = TimeSpan.FromMinutes(1);
                 limiter.QueueLimit = 0;
             });
+
+            /*
+             * Recuperación de contraseña: cinco pedidos cada diez minutos.
+             *
+             * El límite es del servidor y no solo de la base. El cooldown por
+             * usuario evita el inundar un correo ajeno, pero sin esto, un
+             * atacante con un listado de correos gastaría la cuota de envío
+             * de la app entera en un rato y los códigos de los demás dejarían
+             * de llegar. Quien se olvidó la clave tres veces en un minuto es
+             * alguien, no un abuso.
+             */
+            options.AddPolicy(
+                RateLimitPolicies.PasswordReset,
+                http => FixedWindow(http, 5, TimeSpan.FromMinutes(10)));
 
             options.OnRejected = async (context, token) =>
             {

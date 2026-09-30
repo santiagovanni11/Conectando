@@ -39,5 +39,18 @@ public static partial class TestSchema
         );
         CREATE INDEX "IX_messages_ConversationId_CreatedAt_Id" ON "messages" ("ConversationId", "CreatedAt", "Id");
         CREATE INDEX "IX_messages_ReplyToMessageId" ON "messages" ("ReplyToMessageId");
+
+        CREATE TABLE "password_reset_codes" (
+            "Id" uuid NOT NULL,
+            "UserId" uuid NOT NULL,
+            "CodeHash" character varying(60) NOT NULL,
+            "CreatedAt" timestamp with time zone NOT NULL DEFAULT now(),
+            "ExpiresAt" timestamp with time zone NOT NULL DEFAULT now(),
+            "UsedAt" timestamp with time zone NULL,
+            "Attempts" integer NOT NULL DEFAULT 0,
+            CONSTRAINT "PK_password_reset_codes" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_password_reset_codes_users_UserId" FOREIGN KEY ("UserId") REFERENCES "users" ("Id") ON DELETE CASCADE
+        );
+        CREATE INDEX "IX_password_reset_codes_UserId_ExpiresAt" ON "password_reset_codes" ("UserId", "ExpiresAt");
         """;
 }

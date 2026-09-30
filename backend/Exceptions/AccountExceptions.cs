@@ -22,3 +22,16 @@ public class PasswordConfirmationMismatchException : ApiException
 {
     public PasswordConfirmationMismatchException() : base(StatusCodes.Status400BadRequest, "Las contraseñas no coinciden.") { }
 }
+
+/// <summary>
+/// Falla al canjear un código de recuperación.
+///
+/// Un solo error para todos los motivos posibles —código equivocado,
+/// vencido, intentos agotados o correo inexistente— a propósito. Distinguir
+/// los casos le diría a un atacante cuántos intentos le quedan, y de paso le
+/// confirmaría si una casilla está registrada en la app.
+/// </summary>
+public class InvalidResetCodeException : ApiException
+{
+    public InvalidResetCodeException() : base(StatusCodes.Status400BadRequest, "El código no es válido o venció. Pedí uno nuevo.") { }
+}
