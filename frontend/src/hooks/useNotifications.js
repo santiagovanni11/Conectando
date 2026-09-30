@@ -39,20 +39,6 @@ export function useNotifications() {
     }
   }, [attempt])
 
-  /**
-   * Abrir la pantalla marca todo como leído.
-   *
-   * Es lo que hacen las demás apps y lo que espera el usuario: si la pantalla
-   * está abierta, los avisos ya se leyeron. Sin esto el número de arriba se
-   * queda ahí hasta que uno cliquea cada aviso uno por uno, o hasta que pasa
-   * el refresco de respaldo.
-   */
-  useEffect(() => {
-    if (loading || unreadCount === 0) return
-
-    markAllAsRead()
-  }, [loading, unreadCount, markAllAsRead])
-
   const refresh = useCallback(() => setAttempt((current) => current + 1), [])
 
   const loadMore = useCallback(async () => {
@@ -89,6 +75,27 @@ export function useNotifications() {
       refresh()
     }
   }, [refresh])
+
+  /**
+   * Abrir la pantalla marca todo como leído.
+   *
+   * Es lo que hacen las demás apps y lo que espera el usuario: si la pantalla
+   * está abierta, los avisos ya se leyeron. Sin esto el número de arriba se
+   * queda ahí hasta que uno cliquea cada aviso uno por uno, o hasta que pasa
+   * el refresco de respaldo.
+   *
+   * Va DESPUÉS de `markAllAsRead` y no antes, a propósito. El array de
+   * dependencias se evalúa en la línea del `useEffect`, así que nombrar ahí
+   * una `const` que todavía no se declaró la deja en zona muerta y revienta
+   * con "Cannot access ... before initialization". La pantalla entera
+   * desapareció con ese error, y el minificador lo reportaba como una
+   * variable llamada `y`, sin rastro de qué lo causaba.
+   */
+  useEffect(() => {
+    if (loading || unreadCount === 0) return
+
+    markAllAsRead()
+  }, [loading, unreadCount, markAllAsRead])
 
   return {
     items, unreadCount, hasMore, loading, loadingMore, error,
