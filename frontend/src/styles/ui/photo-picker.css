@@ -1,33 +1,34 @@
 /*
- * Input de archivo que no se ve pero sigue dibujándose.
+ * Input de archivo montado sobre su botón.
  *
  * <para>
- * No es un `hidden` ni un `display: none` a propósito. En iOS, si el input de
- * archivo está oculto, el menú de "Cámara / Fototeca /Buscar" se abre en
- * blanco: las opciones existen pero no se ven, y no hay forma de elegir. Es un
- * comportamiento del sistema, no un problema de estilos.
+ * Cubre toda la opción y es transparente. El usuario toca el input de verdad,
+ * con el dedo, sobre algo que tiene tamaño y está en pantalla.
  *
  * <para>
- * La salida es dejar el input en pantalla con tamaño de un píxel y recortado.
- * El elemento sigue teniendo caja y participa del render, que es lo que iOS
- * necesita, pero no ocupa lugar ni se ve.
+ * Ni `display: none` ni un píxel recortado: en iOS, un input de archivo que no
+ * se ve bien hace que la hoja de "Cámara / Fototeca / Buscar" aparezca en
+ * blanco. Con el input encima, iOS tiene un elemento real al que responderle
+ * el toque y lo dibuja bien.
  *
  * <para>
- * El `clip` viene con su `clip-path` porque el primero está marcado como
- * obsoleto y algunos navegadores ya lo ignoran; con el segundo solo, el input
- * se vería como una franja de un píxel en algunos equipos.
+ * `opacity: 0` y no `clip`: con lo recortado, iOS calcula mal dónde poner la
+ * hoja. La opacidad lo deja dibujándose, que es lo que importa.
  */
 .photo-source__input {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* El anillo de foco va en la opción, no en el input: es transparente y el
+   suyo tampoco se vería. Sin esto, con teclado se tabula a ciegas. */
+.photo-source__option:has(.photo-source__input:focus-visible) {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
 }
 
 /* ---------- Selector de cámara / fototeca ---------- */
@@ -40,6 +41,10 @@
 }
 
 .photo-source__option {
+  /* El input de archivo va montado encima de la opción, así que la opción
+     es su referencia de posición. Sin esto, el input se ubicaría contra el
+     modal y el toque no caería donde se ve el botón. */
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);

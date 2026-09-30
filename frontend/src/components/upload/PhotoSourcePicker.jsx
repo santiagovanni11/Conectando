@@ -2,22 +2,26 @@
  * Selector de fotos que en móvil ofrece las dos opciones nativas:
  * sacar una foto con la cámara o elegirla de la fototeca.
  *
- * Se apoya en dos <input type="file">: uno con `capture` fuerza la cámara y el
- * otro sin `capture` deja que el sistema ofrezca la galería.
+ * <para>
+ * Cada opción es una etiqueta con el <input type="file"> puesto encima, del
+ * mismo tamaño y en la misma posición, y no un botón que lo dispara con
+ * `.click()`. Eso es lo que lo hace funcionar en iOS: el usuario toca el
+ * input de verdad, con el dedo, sobre un elemento que está dibujándose.
  *
  * <para>
- * Los dos inputs no van con `hidden`. En iOS, un input de archivo oculto hace
- * que el menú de "Cámara / Fototeca /Buscar" se abra en blanco: las opciones
- * están pero no se ven. Se tapan con `.photo-source__input`, que los deja
- * dibujándose en un píxel en vez de sacarlos de pantalla.
+ * Las dos formas que se hicieron antes dejaban la hoja del sistema en blanco.
+ * Con `hidden`, porque iOS no dibuja bien un input que no está en pantalla. Y
+ * con un input de un píxel más `.click()` desde JavaScript, porque iOS
+ * presenta la hoja como si fuera respuesta a ese toque y encuentra el modal
+ * todavía montado encima. Ninguna de las dos se nota en un escritorio.
  *
  * <para>
- * También llevan `tabIndex={-1}` porque, al estar recortados y no ocultos,
- * el teclado los alcanzaría y dejaría el foco en algo que no se ve. Quien
- * navega con teclado usa los botones del modal, que son los que tienen nombre
- * y descripción.
+ * El modal no se cierra al elegir la opción, sino cuando el archivo llega. Si
+ * se cerrara antes, el input se desmontaría mientras iOS todavía está armando
+ * la hoja. Si el usuario cancela, el modal sigue abierto y puede probar la
+ * otra opción, que es lo que esperaría.
  */
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Icon from '../ui/Icon/Icon'
 import Modal from '../ui/Modal'
 
@@ -30,42 +34,17 @@ export default function PhotoSourcePicker({
   disabled = false,
   className = '',
 }) {
-  const cameraRef = useRef(null)
-  const galleryRef = useRef(null)
   const [isChoosing, setIsChoosing] = useState(false)
 
   function handleFiles(event) {
     const files = event.target.files
     if (files && files.length > 0) onSelect?.(files)
     event.target.value = ''
+    setIsChoosing(false)
   }
 
   return (
     <>
-      <input
-        ref={cameraRef}
-        className="photo-source__input"
-        type="file"
-        accept={ACCEPTED}
-        capture="environment"
-        multiple={multiple}
-        tabIndex={-1}
-        aria-hidden="true"
-        data-testid="camera-input"
-        onChange={handleFiles}
-      />
-      <input
-        ref={galleryRef}
-        className="photo-source__input"
-        type="file"
-        accept={ACCEPTED}
-        multiple={multiple}
-        tabIndex={-1}
-        aria-hidden="true"
-        data-testid="gallery-input"
-        onChange={handleFiles}
-      />
-
       <span className={className} onClick={() => !disabled && setIsChoosing(true)}>
         {trigger}
       </span>
@@ -73,28 +52,34 @@ export default function PhotoSourcePicker({
       {isChoosing && (
         <Modal title="Agregar foto" onClose={() => setIsChoosing(false)}>
           <div className="photo-source">
-            <button
-              type="button"
-              className="photo-source__option"
-              onClick={() => {
-                setIsChoosing(false)
-                cameraRef.current?.click()
-              }}
-            >
+            <label className="photo-source__option">
               <Icon name="camera" size="lg" />
               <span className="photo-source__label">Tomar foto</span>
-            </button>
-            <button
-              type="button"
-              className="photo-source__option"
-              onClick={() => {
-                setIsChoosing(false)
-                galleryRef.current?.click()
-              }}
-            >
+              <input
+                className="photo-source__input"
+                type="file"
+                accept={ACCEPTED}
+                capture="environment"
+                multiple={multiple}
+                aria-label="Tomar foto"
+                data-testid="camera-input"
+                onChange={handleFiles}
+              />
+            </label>
+
+            <label className="photo-source__option">
               <Icon name="image" size="lg" />
               <span className="photo-source__label">Elegir de la fototeca</span>
-            </button>
+              <input
+                className="photo-source__input"
+                type="file"
+                accept={ACCEPTED}
+                multiple={multiple}
+                aria-label="Elegir de la fototeca"
+                data-testid="gallery-input"
+                onChange={handleFiles}
+              />
+            </label>
           </div>
         </Modal>
       )}

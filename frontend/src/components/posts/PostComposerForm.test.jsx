@@ -96,9 +96,11 @@ describe('PostComposerForm', () => {
     renderForm()
 
     await user.click(screen.getByRole('button', { name: /agregar fotos/i }))
-    await user.click(await screen.findByRole('button', { name: /elegir de la fototeca/i }))
 
-    const input = screen.getByTestId('gallery-input')
+    // La opción ya no es un botón: es una etiqueta con el input montado encima,
+    // que es lo que hace que iOS abra la hoja bien. El input sigue siendo
+    // alcanzable con el teclado y tiene su propio nombre.
+    const input = await screen.findByTestId('gallery-input')
     await user.upload(input, new File(['x'], 'a.jpg', { type: 'image/jpeg' }))
 
     await waitFor(() => expect(postService.uploadMedia).toHaveBeenCalled())
@@ -111,7 +113,9 @@ describe('PostComposerForm', () => {
     )
     renderForm()
 
-    const input = screen.getByTestId('gallery-input')
+    await user.click(screen.getByRole('button', { name: /agregar fotos/i }))
+
+    const input = await screen.findByTestId('gallery-input')
     await user.upload(
       input,
       Array.from({ length: 8 }, () => new File(['x'], 'a.jpg', { type: 'image/jpeg' })),
