@@ -33,7 +33,11 @@ public static partial class ServiceCollectionExtensions
         // Quien la recibe solo lee, y así nadie tiene que desempacar .Value.
         var mail = configuration.GetSection(MailSettings.SectionName).Get<MailSettings>() ?? new MailSettings();
         services.AddSingleton(mail);
-        services.AddSingleton<IEmailSender, SmtpEmailSender>();
+
+        // AddHttpClient le da al remitente un HttpClient con renovación de
+        // conexiones incluida, que es lo que evita que se agoten los puertos
+        // del servidor. Va en lugar de new HttpClient() a propósito.
+        services.AddHttpClient<IEmailSender, BrevoEmailSender>();
         services.AddScoped<IPasswordResetService, PasswordResetService>();
 
         services.AddScoped<IAuthService, AuthService>();

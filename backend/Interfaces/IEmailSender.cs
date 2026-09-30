@@ -18,8 +18,8 @@ public record EmailMessage(
 /// Cómo manda la app sus correos.
 ///
 /// Existe la interfaz para que el proveedor no se mezcle con el resto: hoy
-/// habla SMTP con un relay, y mañana puede ser otro sin tocar ni una línea
-/// del servicio de recuperación.
+/// habla por HTTP con la API de Brevo, y mañana puede ser otro sin tocar ni
+/// una línea del servicio de recuperación.
 /// </summary>
 public interface IEmailSender
 {
