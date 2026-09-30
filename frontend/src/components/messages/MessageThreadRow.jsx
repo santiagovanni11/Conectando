@@ -39,12 +39,6 @@ export default function MessageThreadRow({
       style={{ '--swipe': `${shift}px` }}
       {...swipeProps}
     >
-      {/* Sale del lado contrario a la burbuja, como en WhatsApp: si el
-          mensaje está pegado al borde, al otro lado es donde hay hueco. */}
-      <span className="message-row__hint" aria-hidden="true">
-        ↩
-      </span>
-
       {isEditing ? (
         <form
           className="message-edit"

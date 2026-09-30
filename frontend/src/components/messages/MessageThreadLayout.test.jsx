@@ -35,12 +35,35 @@ describe('MessageThread: estructura de la fila', () => {
     const bubble = item.querySelector('.message-bubble')
 
     expect(bubble).toBeTruthy()
-    // Lo importante: la burbuja cuelga DIRECTO de la fila. El único otro
-    // hijo es la flecha del gesto, que está en absolute y no participa del
-    // flex.
+    // Lo importante: la burbuja cuelga DIRECTO de la fila, y la fila no
+    // tiene nada más adentro.
     expect(bubble.parentElement).toBe(item)
-    expect(item.children).toHaveLength(2)
-    expect(item.lastElementChild).toBe(bubble)
+    expect(item.children).toHaveLength(1)
+  })
+
+  it('el gesto no deja flecha ni ningún otro indicador en la fila', () => {
+    // La flecha que aparecía al deslizar se sacó porque quedó pesada en el
+    // hilo. La señal del gesto es la burbuja corriendo, y nada más.
+    const { container } = render(
+      <MessageThread
+        messages={[message('m1', 'user-2', 'hola')]}
+        currentUserId={currentUserId}
+        isLoading={false}
+      />,
+    )
+
+    const item = container.querySelector('ul.message-thread > li')
+
+    expect(container.querySelector('.message-row__hint')).toBeNull()
+    expect(item.textContent).not.toMatch(/[↩↪→←⇢]/)
+  })
+
+  it('no quedan estilos de la flecha que se haya sacado', () => {
+    // Si el marcado se fue pero el CSS quedo, la regla sigue ahi esperando
+    // a que alguien la vuelva a usar, y entonces reaparece sola.
+    const css = readFileSync('src/styles/pages/message-reply.css', 'utf8')
+
+    expect(css).not.toMatch(/message-row__hint/)
   })
 
   it('cada mensaje conserva su clase de propio o ajeno', () => {

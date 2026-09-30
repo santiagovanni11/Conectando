@@ -13,6 +13,11 @@
  *
  * No lleva `overflow: hidden` a propósito: el desplegable del menú de tres
  * puntitos cuelga de la fila, y recortarlo lo volvía invisible.
+ *
+ * Tampoco hay flecha ni ningún otro indicador: la burbuja al correrse es la
+ * única señal del gesto. Se probó con una y quedó visualmente pesada en el
+ * hilo, así que se sacó. Si alguna vez vuelve, que sea una decisión tomada
+ * a propósito y no un descuido.
  */
 .message-thread__item {
   touch-action: pan-y;
@@ -23,29 +28,6 @@
 /* Mientras se arrastra no hay transición: tiene que seguir el dedo. */
 .message-thread__item:active {
   transition: none;
-}
-
-/*
- * La flecha queda en el hueco que deja la burbuja al correrse. Como la fila
- * invierte el orden para los mensajes propios, la flecha va al lado
- * contrario en cada caso; con :has se resuelve sin tocar el marcado.
- */
-.message-row__hint {
-  position: absolute;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--color-ink-soft);
-  opacity: calc(var(--swipe, 0px) / 44);
-  pointer-events: none;
-  flex: none;
-}
-
-.message-thread__item:not(:has(.is-own)) .message-row__hint {
-  right: 0.75rem;
-}
-
-.message-thread__item:has(.is-own) .message-row__hint {
-  left: 0.75rem;
 }
 
 /* Cita dentro de la respuesta. */
