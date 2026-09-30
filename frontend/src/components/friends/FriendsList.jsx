@@ -30,7 +30,9 @@ export default function FriendsList({ friends, status, error, busyId, onRemove, 
             <Avatar name={item.user.displayName} src={item.user.profileImageUrl} size="sm" />
             <span className="friends-row__text">
               <span className="friends-row__name">{item.user.displayName}</span>
-              <UserHandle user={item.user} className="friends-row__meta" />
+              {/* La fila ya es un enlace al perfil: este solo pone el arroba y
+                  mantiene la etiqueta de cuenta dada de baja. */}
+              <UserHandle user={item.user} className="friends-row__meta" linked={false} />
             </span>
           </Link>
           <IconButton

@@ -4,6 +4,7 @@ import Icon from '../ui/Icon/Icon'
 import Loader from '../ui/Loader'
 import EmptyState from '../ui/EmptyState'
 import MessageButton from './MessageButton'
+import UserHandle from '../users/UserHandle'
 
 /**
  * Permite empezar un chat con un amigo. Busca por nombre o usuario.
@@ -57,12 +58,10 @@ export default function StartConversationPanel({ friends, status }) {
                 size="sm"
               />
               <span className="start-conversation__text">
-                <span className="start-conversation__name">
+                <UserHandle user={friend.user} className="start-conversation__name">
                   {friend.user.displayName}
-                </span>
-                <span className="start-conversation__meta">
-                  @{friend.user.userName}
-                </span>
+                </UserHandle>
+                <UserHandle user={friend.user} className="start-conversation__meta" />
               </span>
             </div>
 

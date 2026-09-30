@@ -1,6 +1,7 @@
-﻿import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { render, screen } from '@testing-library/react'
+import { renderWithRouter } from '../../test-utils/renderWithRouter'
 import userEvent from '@testing-library/user-event'
 import MessageBubble from './MessageBubble'
 import { CURRENT_USER_ID, PEER_ID, message } from './messageTestFixtures'
@@ -12,7 +13,7 @@ const MENU_CSS = 'src/styles/pages/message-menu.css'
 const ownHandlers = { onEdit: vi.fn(), onDelete: vi.fn() }
 
 function renderBubble(msg, isOwn, handlers = {}) {
-  return render(<MessageBubble message={msg} isOwn={isOwn} {...handlers} />)
+  return renderWithRouter(<MessageBubble message={msg} isOwn={isOwn} {...handlers} />)
 }
 
 describe('menu del mensaje', () => {

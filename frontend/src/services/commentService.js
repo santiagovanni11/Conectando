@@ -28,6 +28,14 @@ export const commentService = {
     })
   },
 
+  like(commentId) {
+    return apiRequest(`/api/comments/${commentId}/like`, { method: 'PUT' })
+  },
+
+  unlike(commentId) {
+    return apiRequest(`/api/comments/${commentId}/like`, { method: 'DELETE' })
+  },
+
   delete(commentId) {
     return apiRequest(`/api/comments/${commentId}`, {
       method: 'DELETE',

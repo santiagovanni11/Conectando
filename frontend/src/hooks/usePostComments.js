@@ -3,6 +3,19 @@ import { commentService } from '../services/commentService'
 
 const REPLIES_LIMIT = 50
 
+/**
+ * Aplica un nuevo estado de me gusta a un comentario.
+ *
+ * <para>
+ * Vive acá y no en la sección porque el me gusta vive en dos lugares a la vez
+ * —el comentario y sus respuestas— y el estado está partido. Si el cambio se
+ * aplicara en la sección, el corazón de una respuesta abierta quedaría
+ * marcando el del comentario y al revés.
+/// </para>
+ */
+const applyLike = (prev, commentId, likes) =>
+  prev.map((c) => (c.id === commentId ? { ...c, ...likes } : c))
+
 export function usePostComments(postId) {
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(false)
@@ -88,6 +101,14 @@ export function usePostComments(postId) {
     ])))
   }, [])
 
+  const setCommentLike = useCallback((commentId, likes) => {
+    setComments((prev) => applyLike(prev, commentId, likes))
+    setReplyState((prev) => Object.fromEntries(Object.entries(prev).map(([id, state]) => [
+      id,
+      { ...state, items: applyLike(state.items, commentId, likes) },
+    ])))
+  }, [])
+
   return {
     comments,
     loading,
@@ -101,5 +122,6 @@ export function usePostComments(postId) {
     addReply,
     updateComment,
     removeComment,
+    setCommentLike,
   }
 }

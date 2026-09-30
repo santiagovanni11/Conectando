@@ -38,6 +38,7 @@
 @import './posts/like-user.css';
 @import './posts/comments.css';
 @import './posts/comment-item.css';
+@import './posts/comment-like.css';
 @import './posts/comments-forms.css';
 @import './posts/comments-composer.css';
 @import './posts/comments-reply.css';

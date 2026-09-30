@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Avatar from '../ui/Avatar'
 import CommentEditForm from './CommentEditForm'
-import Loader from '../ui/Loader'
+import CommentLikeButton from './CommentLikeButton'
+import CommentReplies from './CommentReplies'
 import UserHandle from '../users/UserHandle'
 import { formatRelativeTime } from '../../utils/dateFormatter'
 import { useAuth } from '../../hooks/useAuth'
@@ -14,10 +15,12 @@ export default function CommentItem({
   repliesLoading = false,
   repliesOpen = false,
   repliesError = false,
+  liking = null,
   onToggleReplies,
   onReply,
   onEdit,
   onDelete,
+  onToggleLike,
 }) {
   const { user } = useAuth()
   const [editing, setEditing] = useState(false)
@@ -40,17 +43,23 @@ export default function CommentItem({
 
   return (
     <div className={`comment${isReply ? ' comment--reply' : ''}`}>
-      <Avatar
-        name={comment.author.displayName}
-        src={comment.author.profileImageUrl}
-        size={isReply ? 'xs' : 'sm'}
-        className="comment__avatar"
-        alt=""
-      />
+      {/* El avatar también lleva al perfil, como en cualquier red: es el
+          blanco más grande y el más fácil de tocar. */}
+      <UserHandle user={comment.author} className="comment__avatar-link">
+        <Avatar
+          name={comment.author.displayName}
+          src={comment.author.profileImageUrl}
+          size={isReply ? 'xs' : 'sm'}
+          className="comment__avatar"
+          alt=""
+        />
+      </UserHandle>
 
       <div className="comment__body">
         <header className="comment__header">
-          <span className="comment__author">{comment.author.displayName}</span>
+          <UserHandle user={comment.author} className="comment__author">
+            {comment.author.displayName}
+          </UserHandle>
           <span className="comment__date">
             {formatRelativeTime(comment.createdAt)}
             {comment.isEdited ? ' · editado' : ''}
@@ -69,6 +78,11 @@ export default function CommentItem({
         )}
 
         <div className="comment__actions">
+          <CommentLikeButton
+            comment={comment}
+            busy={liking === comment.id}
+            onToggle={onToggleLike}
+          />
           {!isReply && (
             <>
               <button type="button" className="comment__action" onClick={() => onReply(comment)}>
@@ -112,30 +126,17 @@ export default function CommentItem({
         </div>
 
         {!isReply && repliesOpen && (
-          <div className="comment__replies">
-            {repliesLoading && replies.length === 0 ? (
-              <span className="comment__replies-loading">
-                <Loader size="sm" label="Cargando respuestas…" />
-              </span>
-            ) : (
-              replies.map((reply) => (
-                <div key={reply.id} className="comment__reply">
-                  <CommentItem
-                    comment={reply}
-                    isReply
-                    submitting={submitting}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                    onToggleReplies={onToggleReplies}
-                  />
-                </div>
-              ))
-            )}
-            {repliesError && <p className="comment__replies-error">No se pudieron cargar las respuestas.</p>}
-            {!repliesLoading && !repliesError && replies.length === 0 && (
-              <p className="comment__replies-empty">Aún no hay respuestas.</p>
-            )}
-          </div>
+          <CommentReplies
+            replies={replies}
+            loading={repliesLoading}
+            error={repliesError}
+            submitting={submitting}
+            liking={liking}
+            onToggle={onToggleReplies}
+            onToggleLike={onToggleLike}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         )}
       </div>
     </div>

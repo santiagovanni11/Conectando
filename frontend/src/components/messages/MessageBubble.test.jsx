@@ -1,13 +1,14 @@
-﻿import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { render, screen } from '@testing-library/react'
+import { renderWithRouter } from '../../test-utils/renderWithRouter'
 import MessageBubble from './MessageBubble'
 import { DELETED_PLACEHOLDER } from '../../constants/messages'
 import { CURRENT_USER_ID, PEER_ID, message } from './messageTestFixtures'
 
 /** La burbuja es un <div>: el <li> lo aporta la fila del hilo. */
 function renderBubble(msg, isOwn, handlers = {}) {
-  return render(<MessageBubble message={msg} isOwn={isOwn} {...handlers} />)
+  return renderWithRouter(<MessageBubble message={msg} isOwn={isOwn} {...handlers} />)
 }
 
 describe('MessageBubble', () => {

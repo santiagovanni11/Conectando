@@ -16,6 +16,7 @@ public class ConectandoDbContext(DbContextOptions<ConectandoDbContext> options) 
     public DbSet<Like> Likes => Set<Like>();
     public DbSet<PostSave> PostSaves => Set<PostSave>();
     public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<CommentLike> CommentLikes => Set<CommentLike>();
     public DbSet<Share> Shares => Set<Share>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<Conversation> Conversations => Set<Conversation>();

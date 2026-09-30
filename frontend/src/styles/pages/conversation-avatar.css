@@ -17,6 +17,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* El nombre del chat lleva al perfil. Sin esto heredaría el subrayado azul
+     del navegador en medio de la barra de título. */
+  text-decoration: none;
+}
+
+.conversation-identity__avatar-link {
+  display: inline-flex;
+  flex-shrink: 0;
+  text-decoration: none;
 }
 
 /*

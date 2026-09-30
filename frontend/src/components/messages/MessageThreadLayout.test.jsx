@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { render, screen } from '@testing-library/react'
+import { renderWithRouter } from '../../test-utils/renderWithRouter'
 import userEvent from '@testing-library/user-event'
 import MessageThread from './MessageThread'
 import { CURRENT_USER_ID, message } from './messageTestFixtures'
@@ -23,7 +24,7 @@ describe('MessageThread: estructura de la fila', () => {
     // angosto y se encogió; el `row`/`row-reverse` del <li>, que distingue
     // propios de ajenos, dejó de mandar; y el `overflow: hidden` recortó el
     // desplegable del menú.
-    const { container } = render(
+    const { container } = renderWithRouter(
       <MessageThread
         messages={[message('m1', 'user-2', 'hola')]}
         currentUserId={currentUserId}
@@ -44,7 +45,7 @@ describe('MessageThread: estructura de la fila', () => {
   it('el gesto no deja flecha ni ningún otro indicador en la fila', () => {
     // La flecha que aparecía al deslizar se sacó porque quedó pesada en el
     // hilo. La señal del gesto es la burbuja corriendo, y nada más.
-    const { container } = render(
+    const { container } = renderWithRouter(
       <MessageThread
         messages={[message('m1', 'user-2', 'hola')]}
         currentUserId={currentUserId}
@@ -69,7 +70,7 @@ describe('MessageThread: estructura de la fila', () => {
   it('cada mensaje conserva su clase de propio o ajeno', () => {
     // El wrapper tenía `justify-content: flex-end` sin condiciones y anulaba
     // la inversión de la fila: todo quedaba del mismo lado.
-    const { container } = render(
+    const { container } = renderWithRouter(
       <MessageThread
         messages={[
           message('m1', currentUserId, 'mío'),
@@ -106,7 +107,7 @@ describe('MessageThread: estructura de la fila', () => {
     const onReply = vi.fn()
     const user = userEvent.setup()
 
-    render(
+    renderWithRouter(
       <MessageThread
         messages={[message('m1', 'user-2', 'hola')]}
         currentUserId={currentUserId}

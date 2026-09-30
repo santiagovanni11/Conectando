@@ -13,4 +13,10 @@ public class CommentDto
     public bool IsEdited { get; set; }
     public bool IsDeleted { get; set; }
     public int RepliesCount { get; set; }
+
+    /// <summary>Cuántos me gusta lleva el comentario.</summary>
+    public int LikesCount { get; set; }
+
+    /// <summary>Lo puso quien está mirando. Solo esa persona lo ve.</summary>
+    public bool LikedByMe { get; set; }
 }

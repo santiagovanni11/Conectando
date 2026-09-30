@@ -10,3 +10,20 @@ public interface ICommentService
     Task<CommentDto> UpdateCommentAsync(Guid commentId, Guid userId, UpdateCommentRequest request, CancellationToken cancellationToken = default);
     Task DeleteCommentAsync(Guid commentId, Guid userId, CancellationToken cancellationToken = default);
 }
+
+/// <summary>
+/// Me gusta de un comentario.
+///
+/// <para>
+/// Va aparte de <see cref="ICommentService"/> porque es una operación
+/// distinta: no crea ni borra el comentario, solo lo marca. Mezclarla
+/// obligaría a los que llaman a la interfaz de comentarios a conocer también
+/// los me gusta.
+/// </para>
+/// </summary>
+public interface ICommentLikeService
+{
+    Task<CommentLikeStatusDto> LikeAsync(Guid commentId, Guid userId, CancellationToken cancellationToken = default);
+
+    Task<CommentLikeStatusDto> UnlikeAsync(Guid commentId, Guid userId, CancellationToken cancellationToken = default);
+}

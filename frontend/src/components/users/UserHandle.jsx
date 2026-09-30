@@ -2,17 +2,30 @@ import { Link } from 'react-router-dom'
 import { ROUTES } from '../../constants/routes'
 
 /**
- * Cómo se muestra el nombre de una cuenta.
+ * Enlaza un nombre de usuario con su perfil.
  *
- * Existe porque el mismo dato se pinta en muchos lugares —el encabezado de
- * una publicación, un comentario, la lista de amigos, un like— y la decisión
- * de qué poner cuando la cuenta ya no existe tiene que ser la misma en todos.
- * Repartida por los componentes, el día que cambie uno queda mostrando el
- * identificador interno y nadie se da cuenta hasta que se ve en pantalla.
+ * <para>
+ * Es la pieza que hace que tocar un nombre lleve al perfil, como en cualquier
+ * red social. Existe una sola y en un solo lugar porque el nombre de alguien
+ * aparece en muchos lugares —el encabezado de una publicación, un comentario,
+ * la lista de amigos, un me gusta— y decidir en cada componente si va con
+ * enlace o no lleva a que un día uno de ellos se quede sin él y nadie lo note.
  *
+ * <para>
+ * Sin hijos muestra el nombre de usuario. Con hijos muestra lo que se le pase:
+ * los comentarios y los chats muestran el nombre de pila, no el arroba.
+ *
+ * <para>
+ * `linked={false}` deja el texto sin enlace. Existe para cuando el contenedor ya
+ * es un enlace al perfil —una fila de la lista de amigos—: dos enlaces anidados
+ * son HTML inválido, y el de adentro además compite con el de afuera por el
+ * mismo destino.
+ *
+ * <para>
  * Una cuenta dada de baja llega con `isDeleted` y sin nombre de usuario: el
- * servidor no manda el identificador que queda guardado. Acá se decide el
- * texto y si se puede entrar a ese perfil, que ya no existe.
+ * servidor no manda el identificador que queda guardado. Ahí no hay perfil al
+ * que ir, así que se muestra una etiqueta y no un enlace roto.
+ * </para>
  */
 
 /**
@@ -29,19 +42,30 @@ import { ROUTES } from '../../constants/routes'
  */
 const MARCA_DE_BAJA = 'eliminado-'
 
-export default function UserHandle({ user, className }) {
+export default function UserHandle({ user, className, children, linked = true }) {
   if (!user) return null
 
   const nombre = user.userName ?? ''
-  const eliminado = Boolean(user.isDeleted) || nombre === '' || nombre.startsWith(MARCA_DE_BAJA)
+
+  // La señal de que la cuenta ya no existe es `isDeleted`, que manda el
+  // servidor. La marca del placeholder es la red por si llegara un backend
+  // viejo sin el campo: un nombre que empieza así nunca fue elegido por una
+  // persona, así que no puede mostrarse.
+  const eliminado = Boolean(user.isDeleted) || nombre.startsWith(MARCA_DE_BAJA)
+
+  const texto = children ?? (nombre ? `@${nombre}` : user.displayName)
 
   if (eliminado) {
     return <span className={className}>Cuenta eliminada</span>
   }
 
+  if (!linked) {
+    return <span className={className}>{texto}</span>
+  }
+
   return (
     <Link className={className} to={ROUTES.user(user.id)}>
-      @{nombre}
+      {texto}
     </Link>
   )
 }

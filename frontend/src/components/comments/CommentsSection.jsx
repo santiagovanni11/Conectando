@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import CommentItem from './CommentItem'
 import CommentComposer from './CommentComposer'
 import { usePostComments } from '../../hooks/usePostComments'
-import { useCommentActions } from '../../hooks/useCommentActions'
+import { useCommentActions, useCommentLikes } from '../../hooks/useCommentActions'
 
 const DELETED_TEXT = 'Este comentario fue eliminado.'
 
@@ -10,15 +10,21 @@ export default function CommentsSection({ postId, onCountChange }) {
   const [replyingTo, setReplyingTo] = useState(null)
   const postComments = usePostComments(postId)
   const { submitting, error: actionError, createComment, updateComment: updateCommentApi, deleteComment } = useCommentActions(postId)
+  const { liking, error: likeError, toggle: toggleLike } = useCommentLikes()
   const {
     comments, loading, error, hasMore, replyState,
     loadInitial, loadMore, toggleReplies,
-    addComment, addReply, updateComment, removeComment,
+    addComment, addReply, updateComment, removeComment, setCommentLike,
   } = postComments
 
   useEffect(() => {
     loadInitial()
   }, [loadInitial])
+
+  async function handleToggleLike(comment) {
+    const estado = await toggleLike(comment)
+    if (estado) setCommentLike(comment.id, estado)
+  }
 
   async function handleCreate(content, parentCommentId) {
     const result = await createComment(content, parentCommentId)
@@ -65,6 +71,7 @@ export default function CommentsSection({ postId, onCountChange }) {
 
       {error && <p className="comments-section__error">{error}</p>}
       {actionError && <p className="comments-section__error">{actionError}</p>}
+      {likeError && <p className="comments-section__error">{likeError}</p>}
 
       {loading && comments.length === 0 && <p className="comments-section__loading">Cargando comentarios...</p>}
 
@@ -82,10 +89,12 @@ export default function CommentsSection({ postId, onCountChange }) {
               repliesOpen={replyState[comment.id]?.open ?? false}
               repliesError={replyState[comment.id]?.error ?? false}
               submitting={submitting}
+              liking={liking}
               onToggleReplies={toggleReplies}
               onReply={setReplyingTo}
               onEdit={handleUpdate}
               onDelete={handleDelete}
+              onToggleLike={handleToggleLike}
             />
             {replyingTo && (replyingTo.id === comment.id || replyingTo.parentCommentId === comment.id) && (
               <div className="comments-section__reply">

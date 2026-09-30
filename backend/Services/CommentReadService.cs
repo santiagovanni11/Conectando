@@ -45,11 +45,15 @@ public class CommentReadService(ConectandoDbContext dbContext, PostVisibilitySer
 
         var commentIds = pageItems.Select(c => c.Id).ToList();
         var repliesCount = await CommentCountService.GetRepliesCountAsync(dbContext, commentIds, cancellationToken);
+        var likes = await CommentLikeReader.GetByCommentsAsync(dbContext, commentIds, userId, cancellationToken);
 
         var dtos = await CommentDtoProjector.ProjectAsync(dbContext, pageItems, cancellationToken);
         foreach (var dto in dtos)
         {
             dto.RepliesCount = repliesCount.GetValueOrDefault(dto.Id, 0);
+            var estado = likes.GetValueOrDefault(dto.Id);
+            dto.LikesCount = estado.Count;
+            dto.LikedByMe = estado.LikedByMe;
         }
 
         var last = pageItems.LastOrDefault();
@@ -93,6 +97,17 @@ public class CommentReadService(ConectandoDbContext dbContext, PostVisibilitySer
             .Take(limit)
             .ToListAsync(cancellationToken);
 
-        return await CommentDtoProjector.ProjectAsync(dbContext, replies, cancellationToken);
+        var likes = await CommentLikeReader.GetByCommentsAsync(
+            dbContext, replies.Select(c => c.Id).ToList(), userId, cancellationToken);
+
+        var dtos = await CommentDtoProjector.ProjectAsync(dbContext, replies, cancellationToken);
+        foreach (var dto in dtos)
+        {
+            var estado = likes.GetValueOrDefault(dto.Id);
+            dto.LikesCount = estado.Count;
+            dto.LikedByMe = estado.LikedByMe;
+        }
+
+        return dtos;
     }
 }

@@ -1,6 +1,7 @@
 import SeenTicks from './SeenTicks'
 import MessageMenu from './MessageMenu'
 import MessageReplyQuote from './MessageReplyQuote'
+import UserHandle from '../users/UserHandle'
 import { DELETED_PLACEHOLDER } from '../../constants/messages'
 
 /**
@@ -35,7 +36,13 @@ export default function MessageBubble({ message, isOwn, onEdit, onDelete, onRepl
 
   return (
     <div className={`message-bubble ${isOwn ? 'is-own' : 'is-theirs'}`}>
-      {!isOwn && <span className="message-bubble__author">{message.sender?.displayName}</span>}
+      {!isOwn && (
+        // El nombre de quien escribe lleva a su perfil: en un chat de grupo
+        // es la única forma de llegar a la persona sin abrir la conversación.
+        <UserHandle user={message.sender} className="message-bubble__author">
+          {message.sender?.displayName}
+        </UserHandle>
+      )}
 
       <MessageReplyQuote replyTo={message.replyTo} />
 

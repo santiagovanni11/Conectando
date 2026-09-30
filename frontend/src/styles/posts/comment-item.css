@@ -14,6 +14,12 @@
   margin-top: 2px;
 }
 
+.comment__avatar-link {
+  flex-shrink: 0;
+  display: inline-flex;
+  text-decoration: none;
+}
+
 .comment--reply .comment__avatar {
   margin-top: 0;
   flex-shrink: 0;
@@ -43,6 +49,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+/* El nombre es un enlace, pero no tiene por qué verse como un link azul en
+   medio del texto: el color lo pone la propia clase y el subrayado aparece
+   solo al pasar por encima, para que se vea que es pulsable. */
+a.comment__author:hover,
+a.comment__author:focus-visible {
+  text-decoration: underline;
 }
 
 .comment__date {
@@ -103,23 +118,6 @@
   background-color: var(--color-danger-wash);
 }
 
-/* Estados del listado de respuestas */
-.comment__replies-loading,
-.comment__replies-empty {
-  font-size: var(--text-xs);
-  color: var(--color-ink-soft);
-  display: inline-flex;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-
-.comment__replies-error {
-  font-size: var(--text-xs);
-  color: var(--color-danger);
-  margin-top: var(--space-1);
-}
-
-/* Respuestas: indentación moderada con guía visual */
 .comment__replies {
   display: flex;
   flex-direction: column;

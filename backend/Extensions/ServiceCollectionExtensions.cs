@@ -42,6 +42,7 @@ public static partial class ServiceCollectionExtensions
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<ICommentLikeService, CommentLikeService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserProfileService, UserProfileService>();
         services.AddScoped<IProfileCountService, ProfileCountService>();

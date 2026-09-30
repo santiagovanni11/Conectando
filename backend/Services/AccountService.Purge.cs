@@ -47,6 +47,9 @@ public partial class AccountService
         await db.PasswordResetCodes.IgnoreQueryFilters()
             .Where(c => c.UserId == userId).ExecuteDeleteAsync(cancellationToken);
 
+        await db.CommentLikes.IgnoreQueryFilters()
+            .Where(l => l.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+
         await db.Comments.IgnoreQueryFilters()
             .Where(c => c.AuthorId == userId).ExecuteDeleteAsync(cancellationToken);
 

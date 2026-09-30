@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { renderWithRouter } from '../../test-utils/renderWithRouter'
 import userEvent from '@testing-library/user-event'
 import MessageThread from './MessageThread'
 import { CURRENT_USER_ID, message } from './messageTestFixtures'
@@ -12,19 +13,19 @@ beforeEach(() => {
 
 describe('MessageThread', () => {
   it('muestra el aviso cuando no hay mensajes', () => {
-    render(<MessageThread messages={[]} currentUserId={currentUserId} isLoading={false} />)
+    renderWithRouter(<MessageThread messages={[]} currentUserId={currentUserId} isLoading={false} />)
 
     expect(screen.getByText(/Todavía no hay mensajes/)).toBeInTheDocument()
   })
 
   it('muestra el estado de carga', () => {
-    render(<MessageThread messages={[]} currentUserId={currentUserId} isLoading />)
+    renderWithRouter(<MessageThread messages={[]} currentUserId={currentUserId} isLoading />)
 
     expect(screen.getByText('Cargando mensajes…')).toBeInTheDocument()
   })
 
   it('distingue propios y ajenos por su clase', () => {
-    const { container } = render(
+    const { container } = renderWithRouter(
       <MessageThread
         messages={[message('m1', currentUserId, 'hola'), message('m2', 'user-2', 'qué tal')]}
         currentUserId={currentUserId}
@@ -40,7 +41,7 @@ describe('MessageThread', () => {
     const onLoadMore = vi.fn()
     const user = userEvent.setup()
 
-    render(
+    renderWithRouter(
       <MessageThread
         messages={[message('m1', 'user-2', 'hola')]}
         currentUserId={currentUserId}
@@ -58,7 +59,7 @@ describe('MessageThread', () => {
   it('cada mensaje es un <li> propio, sin anidar', () => {
     // Regresión: la burbuja era un <li> dentro de otro <li>. Eso no es HTML
     // válido y rompía el flex, dejando todos los mensajes en una fila.
-    const { container } = render(
+    const { container } = renderWithRouter(
       <MessageThread
         messages={[
           message('m1', 'user-2', 'primero'),
@@ -80,7 +81,7 @@ describe('MessageThread', () => {
     // y la pantalla decía "Todavía no hay mensajes. Decí hola." Los datos
     // estaban enteros en la base. Un error de carga tiene que decir que hay
     // un error, no que la conversación está vacía.
-    const { container } = render(
+    const { container } = renderWithRouter(
       <MessageThread
         messages={[]}
         currentUserId={currentUserId}
@@ -97,7 +98,7 @@ describe('MessageThread', () => {
     // Al revés del anterior: si los mensajes ya están en pantalla, un error
     // de recarga no puede taparlos ni agregar ruido. El usuario tiene lo
     // que fue a buscar.
-    render(
+    renderWithRouter(
       <MessageThread
         messages={[message('m1', 'user-2', 'hola')]}
         currentUserId={currentUserId}

@@ -18,7 +18,7 @@ public static class CommentDtoProjector
         var authors = await dbContext.Users
             .AsNoTracking()
             .Where(u => authorIds.Contains(u.Id))
-            .Select(u => new { u.Id, u.UserName, u.DisplayName, u.ProfileImageUrl })
+            .Select(u => new { u.Id, u.UserName, u.DisplayName, u.ProfileImageUrl, u.DeletedAt })
             .ToDictionaryAsync(u => u.Id, cancellationToken);
 
         return comments.Select(c =>
@@ -35,6 +35,7 @@ public static class CommentDtoProjector
                     UserName = author?.UserName ?? string.Empty,
                     DisplayName = author?.DisplayName ?? string.Empty,
                     ProfileImageUrl = author?.ProfileImageUrl,
+                    IsDeleted = author is null || author.DeletedAt is not null,
                 },
                 ParentCommentId = c.ParentCommentId,
                 Content = c.DeletedAt is not null ? "Este comentario fue eliminado." : c.Content,

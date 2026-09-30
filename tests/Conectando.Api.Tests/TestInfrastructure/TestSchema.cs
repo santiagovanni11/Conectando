@@ -12,6 +12,7 @@ public static partial class TestSchema
 {
     public const string DropTablesSql = """
         DROP TABLE IF EXISTS "comments" CASCADE;
+        DROP TABLE IF EXISTS "comment_likes" CASCADE;
         DROP TABLE IF EXISTS "notifications" CASCADE;
         DROP TABLE IF EXISTS "post_media" CASCADE;
         DROP TABLE IF EXISTS "post_saves" CASCADE;

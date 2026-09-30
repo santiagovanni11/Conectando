@@ -1,0 +1,53 @@
+/* ---------- Me gusta del comentario ---------- */
+
+.comment__like {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.comment__like-button {
+  color: var(--color-ink-faint);
+}
+
+.comment__like--active .comment__like-button,
+.comment__like-button:hover {
+  color: var(--color-danger);
+}
+
+.comment__like-count {
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+  /* Cifras de ancho fijo: si el número pasa de 1 a 10, el corazón se corre de
+     lugar y parece que se movió solo al tocarlo. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Respuestas desplegadas ---------- */
+
+.comment__replies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  /* La guía vertical: sin ella, las respuestas se leen como comentarios
+     sueltos del post y no como contestación a uno. */
+  margin-left: 1.5rem;
+  padding-left: var(--space-2);
+  border-left: 2px solid var(--color-border);
+}
+
+.comment__replies-loading,
+.comment__replies-empty {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+}
+
+.comment__replies-error {
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}

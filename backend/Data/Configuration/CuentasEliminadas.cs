@@ -40,6 +40,9 @@ public static class CuentasEliminadas
 
     public static readonly Expression<Func<Share, bool>> QuienCompartioVivo = s => s.User.DeletedAt == null;
 
+    public static readonly Expression<Func<CommentLike, bool>> QuemPusoMeGustaEnComentarioVivo =
+        l => l.User.DeletedAt == null;
+
     public static readonly Expression<Func<PostMedia, bool>> DueñoVivo = m => m.User.DeletedAt == null;
 
     public static readonly Expression<Func<PasswordResetCode, bool>> ConCuentaViva = c => c.User.DeletedAt == null;

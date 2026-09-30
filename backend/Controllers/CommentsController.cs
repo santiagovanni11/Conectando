@@ -70,3 +70,29 @@ public class CommentRepliesController(ICommentService commentService) : Controll
         return NoContent();
     }
 }
+
+[ApiController]
+[Route("api/comments/{commentId:guid}/like")]
+public class CommentLikeController(ICommentLikeService commentLikes) : ControllerBase
+{
+    [HttpPut]
+    [EnableRateLimiting(RateLimitPolicies.Writes)]
+    public async Task<ActionResult<CommentLikeStatusDto>> Like(
+        Guid commentId,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = User.GetUserId();
+        var result = await commentLikes.LikeAsync(commentId, userId, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult<CommentLikeStatusDto>> Unlike(
+        Guid commentId,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = User.GetUserId();
+        var result = await commentLikes.UnlikeAsync(commentId, userId, cancellationToken);
+        return Ok(result);
+    }
+}

@@ -28,6 +28,20 @@ export function conversationTitle(conversation) {
 }
 
 /**
+ * La persona con la que se está chateando, si la hay.
+ *
+ * <para>
+ * Devuelve `null` en un chat de grupo: ahí no hay un perfil al que llevar, y
+ * enlazar el nombre de la conversación a una sola persona sería llevar a
+ * cualquier grupo al perfil equivocado.
+/// </para>
+ */
+export function conversationPeer(conversation) {
+  const peers = conversation?.peers ?? []
+  return peers.length === 1 ? peers[0] : null
+}
+
+/**
  * Texto de la previsualización en la lista de conversaciones.
  *
  * Un mensaje borrado llega con el contenido vacío —el texto ya no existe—,

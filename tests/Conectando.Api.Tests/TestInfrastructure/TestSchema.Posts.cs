@@ -48,6 +48,15 @@ public static partial class TestSchema
         CREATE INDEX "IX_comments_PostId_CreatedAt_Id" ON "comments" ("PostId", "CreatedAt", "Id");
         CREATE INDEX "IX_comments_ParentCommentId_CreatedAt_Id" ON "comments" ("ParentCommentId", "CreatedAt", "Id");
         CREATE INDEX "IX_comments_AuthorId_CreatedAt" ON "comments" ("AuthorId", "CreatedAt");
+        CREATE TABLE "comment_likes" (
+            "CommentId" uuid NOT NULL,
+            "UserId" uuid NOT NULL,
+            "CreatedAt" timestamp with time zone NOT NULL DEFAULT now(),
+            CONSTRAINT "PK_comment_likes" PRIMARY KEY ("CommentId", "UserId"),
+            CONSTRAINT "FK_comment_likes_comments_CommentId" FOREIGN KEY ("CommentId") REFERENCES "comments" ("Id") ON DELETE CASCADE,
+            CONSTRAINT "FK_comment_likes_users_UserId" FOREIGN KEY ("UserId") REFERENCES "users" ("Id")
+        );
+        CREATE INDEX "IX_comment_likes_CommentId" ON "comment_likes" ("CommentId");
         CREATE TABLE "likes" (
             "UserId" uuid NOT NULL,
             "PostId" uuid NOT NULL,
