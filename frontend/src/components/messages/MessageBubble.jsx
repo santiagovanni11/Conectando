@@ -1,5 +1,6 @@
 import SeenTicks from './SeenTicks'
 import MessageMenu from './MessageMenu'
+import MessageReplyQuote from './MessageReplyQuote'
 import { DELETED_PLACEHOLDER } from '../../constants/messages'
 
 /**
@@ -10,9 +11,10 @@ import { DELETED_PLACEHOLDER } from '../../constants/messages'
  * los dejaba todos en una misma línea.
  *
  * Un mensaje borrado no muestra su texto ni menú de edición: se reemplaza
- * por un aviso, igual que en WhatsApp.
+ * por un aviso, igual que en WhatsApp. Tampoco acepta respuestas ni gesto
+ * de deslizar: no hay nada que citar.
  */
-export default function MessageBubble({ message, isOwn, onEdit, onDelete }) {
+export default function MessageBubble({ message, isOwn, onEdit, onDelete, onReply }) {
   const time = new Date(message.createdAt).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
@@ -34,6 +36,8 @@ export default function MessageBubble({ message, isOwn, onEdit, onDelete }) {
   return (
     <div className={`message-bubble ${isOwn ? 'is-own' : 'is-theirs'}`}>
       {!isOwn && <span className="message-bubble__author">{message.sender?.displayName}</span>}
+
+      <MessageReplyQuote replyTo={message.replyTo} />
 
       <p className="message-bubble__text">{message.content}</p>
 
@@ -62,8 +66,13 @@ export default function MessageBubble({ message, isOwn, onEdit, onDelete }) {
         )}
       </span>
 
-      {(onEdit || onDelete) && (
-        <MessageMenu isOwn={isOwn} onEdit={onEdit} onDelete={onDelete} />
+      {(onEdit || onDelete || onReply) && (
+        <MessageMenu
+          isOwn={isOwn}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onReply={onReply}
+        />
       )}
     </div>
   )

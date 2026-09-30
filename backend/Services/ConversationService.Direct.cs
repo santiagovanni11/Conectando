@@ -94,45 +94,4 @@ public partial class ConversationService
         Guid conversationId,
         Guid excludeUserId,
         CancellationToken cancellationToken = default) => PeerIdsAsync(conversationId, excludeUserId, cancellationToken);
-
-    private static MessageDto MapMessage(MessageRow row, DateTime seenCutoff) => new()
-    {
-        Id = row.Id,
-        ConversationId = row.ConversationId,
-        // Un mensaje borrado no viaja con su texto, ni para quien lo mandó.
-        Content = row.IsDeleted ? string.Empty : row.Content,
-        CreatedAt = row.CreatedAt,
-        IsEdited = row.EditedAt is not null,
-        IsDeleted = row.IsDeleted,
-        IsSeenByPeer = row.CreatedAt <= seenCutoff,
-        Sender = new MessageAuthorDto
-        {
-            Id = row.SenderId,
-            UserName = row.SenderUserName,
-            DisplayName = row.SenderDisplayName,
-            ProfileImageUrl = row.SenderProfileImageUrl,
-        },
-    };
-
-    private async Task<MessageDto> BuildMessageDtoAsync(Guid messageId, CancellationToken cancellationToken)
-    {
-        var row = await _dbContext.Messages
-            .AsNoTracking()
-            .Where(m => m.Id == messageId)
-            .Select(m => new MessageRow(
-                m.Id,
-                m.ConversationId,
-                m.Content,
-                m.CreatedAt,
-                m.SenderId,
-                m.Sender.UserName,
-                m.Sender.DisplayName,
-                m.Sender.ProfileImageUrl,
-                m.EditedAt,
-                m.IsDeleted))
-            .FirstAsync(cancellationToken);
-
-        // Acaba de salir: el otro todavía no pudo leerlo.
-        return MapMessage(row, DateTime.MinValue);
-    }
 }

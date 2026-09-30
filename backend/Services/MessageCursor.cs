@@ -16,7 +16,17 @@ internal sealed record MessageRow(
     string SenderDisplayName,
     string? SenderProfileImageUrl,
     DateTime? EditedAt,
-    bool IsDeleted);
+    bool IsDeleted,
+    // Datos de la cita, cuando el mensaje responde a otro. Con default para
+    // que las consultas que no necesitan la cita no la proyecten.
+    //
+    // ReplyToIsDeleted es nullable a propósito. El LEFT JOIN de la cita
+    // devuelve null cuando el mensaje no cita a nadie, y si el destino del
+    // record fuera un bool, EF fallaría al castear ese null.
+    Guid? ReplyToMessageId = null,
+    string? ReplyToDisplayName = null,
+    string? ReplyToContent = null,
+    bool? ReplyToIsDeleted = null);
 
 internal sealed record PeerMessageStamp(Guid ConversationId, DateTime CreatedAt);
 

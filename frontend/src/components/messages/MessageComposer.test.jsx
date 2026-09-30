@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MessageComposer from './MessageComposer'
+import { PEER_ID, message } from './messageTestFixtures'
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -18,7 +19,10 @@ describe('MessageComposer', () => {
     await user.type(input, 'hola')
     await user.click(screen.getByRole('button', { name: 'Enviar' }))
 
-    expect(onSend).toHaveBeenCalledWith('hola')
+    // El segundo argumento es el id citado. Sin respuesta va null explícito,
+    // no undefined: el servicio lo manda en el body y undefined se perdería
+    // al serializar.
+    expect(onSend).toHaveBeenCalledWith('hola', null)
     expect(input).toHaveValue('')
   })
 
@@ -30,7 +34,58 @@ describe('MessageComposer', () => {
 
     await user.type(screen.getByLabelText('Mensaje'), 'hola{Enter}')
 
-    expect(onSend).toHaveBeenCalledWith('hola')
+    expect(onSend).toHaveBeenCalledWith('hola', null)
+  })
+
+  it('envía citando el mensaje que se está respondiendo', async () => {
+    const onSend = vi.fn()
+    const user = userEvent.setup()
+
+    render(<MessageComposer onSend={onSend} replyTo={message('m1', PEER_ID, 'hola')} />)
+
+    await user.type(screen.getByLabelText('Mensaje'), 'buenos días{Enter}')
+
+    expect(onSend).toHaveBeenCalledWith('buenos días', 'm1')
+  })
+
+  it('muestra la barra de respuesta y la puede cancelar', async () => {
+    const onCancelReply = vi.fn()
+    const user = userEvent.setup()
+
+    render(
+      <MessageComposer
+        onSend={vi.fn()}
+        onCancelReply={onCancelReply}
+        replyTo={message('m1', PEER_ID, 'hola')}
+      />,
+    )
+
+    expect(screen.getByText(/Respondiendo a Ana/)).toBeInTheDocument()
+    expect(screen.getByLabelText('Mensaje')).toHaveAttribute(
+      'placeholder',
+      'Escribí tu respuesta',
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Cancelar la respuesta' }))
+
+    expect(onCancelReply).toHaveBeenCalled()
+  })
+
+  it('baja la barra de respuesta al enviar', async () => {
+    const onCancelReply = vi.fn()
+    const user = userEvent.setup()
+
+    render(
+      <MessageComposer
+        onSend={vi.fn()}
+        onCancelReply={onCancelReply}
+        replyTo={message('m1', PEER_ID, 'hola')}
+      />,
+    )
+
+    await user.type(screen.getByLabelText('Mensaje'), 'gracias{Enter}')
+
+    expect(onCancelReply).toHaveBeenCalled()
   })
 
   it('no envía si el mensaje está vacío', async () => {

@@ -10,7 +10,7 @@ public interface IConversationService
     Task<List<ConversationDto>> GetConversationsAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<ConversationDto> StartDirectAsync(Guid userId, Guid recipientId, CancellationToken cancellationToken = default);
     Task<MessagePageDto> GetMessagesAsync(Guid userId, Guid conversationId, string? cursor, int limit, CancellationToken cancellationToken = default);
-    Task<MessageDto> SendMessageAsync(Guid userId, Guid conversationId, string content, CancellationToken cancellationToken = default);
+    Task<MessageDto> SendMessageAsync(Guid userId, Guid conversationId, string content, Guid? replyToMessageId = null, CancellationToken cancellationToken = default);
     Task MarkAsReadAsync(Guid userId, Guid conversationId, CancellationToken cancellationToken = default);
 
     /// <summary>

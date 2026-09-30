@@ -52,10 +52,11 @@ public class MessageHub(
     /// actualiza al refrescar: un mensaje que llega con el chat cerrado queda
     /// invisible hasta que se abre otra pestaña.
     /// </remarks>
-    public async Task SendMessage(Guid conversationId, string content)
+    public async Task SendMessage(Guid conversationId, string content, Guid? replyToMessageId = null)
     {
         var userId = GetUserId();
-        var message = await _conversationService.SendMessageAsync(userId, conversationId, content);
+        var message = await _conversationService.SendMessageAsync(
+            userId, conversationId, content, replyToMessageId);
         await _broadcaster.MessageReceivedAsync(conversationId, message);
 
         var peerIds = await _conversationService.GetPeerIdsAsync(conversationId, userId);

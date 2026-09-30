@@ -50,6 +50,16 @@ public class Message
     public DateTime? EditedAt { get; set; }
     public bool IsDeleted { get; set; }
 
+    /// <summary>
+    /// Mensaje al que responde este, si responde a alguno.
+    ///
+    /// Guarda la referencia y no una copia del texto a propósito. Así, si el
+    /// original se edita dentro de su ventana, la cita se actualiza sola en
+    /// vez de quedarnos con dos versiones distintas del mismo mensaje.
+    /// </summary>
+    public Guid? ReplyToMessageId { get; set; }
+
     public Conversation Conversation { get; set; } = null!;
     public AppUser Sender { get; set; } = null!;
+    public Message? ReplyToMessage { get; set; }
 }

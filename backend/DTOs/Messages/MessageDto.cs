@@ -19,6 +19,31 @@ public class MessageDto
     /// todos, incluido quien lo mandó: el texto deja de existir en el mundo.
     /// </summary>
     public bool IsDeleted { get; init; }
+
+    /// <summary>
+    /// Mensaje al que responde este, o null si no responde a ninguno.
+    /// Viaja resuelto porque la burbuja lo muestra citado: si el front tuviera
+    /// que pedirlo aparte, al abrir el hilo harían una consulta por mensaje.
+    /// </summary>
+    public MessageReplyDto? ReplyTo { get; init; }
+}
+
+/// <summary>
+/// Cita del mensaje original dentro de una respuesta.
+/// </summary>
+public class MessageReplyDto
+{
+    public Guid Id { get; init; }
+    public string SenderDisplayName { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Recorte del texto original. Viene recortado del servidor a propósito:
+    /// el mensaje puede tener 2000 caracteres y la cita muestra una línea.
+    /// </summary>
+    public string Preview { get; init; } = string.Empty;
+
+    /// <summary>El original ya no existe; la cita muestra un aviso.</summary>
+    public bool IsDeleted { get; init; }
 }
 
 public class MessageAuthorDto
@@ -39,6 +64,12 @@ public class MessagePageDto
 public class SendMessageRequest
 {
     public string Content { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Id del mensaje al que se responde, o null para enviar sin cita.
+    /// Lo valida el servidor: tiene que ser de esta misma conversación.
+    /// </summary>
+    public Guid? ReplyToMessageId { get; set; }
 }
 
 public class EditMessageRequest

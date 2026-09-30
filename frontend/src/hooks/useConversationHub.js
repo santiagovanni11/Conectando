@@ -49,7 +49,8 @@ export function useConversationHub() {
       [invoke],
     ),
     sendViaHub: useCallback(
-      (id, content) => invoke('SendMessage', id, content),
+      (id, content, replyToMessageId = null) =>
+        invoke('SendMessage', id, content, replyToMessageId),
       [invoke],
     ),
     markReadViaHub: useCallback(

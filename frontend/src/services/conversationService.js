@@ -15,10 +15,10 @@ export function fetchMessages(conversationId, { cursor, limit = 30 } = {}) {
   return apiRequest(`/api/conversations/${conversationId}/messages?${query.toString()}`)
 }
 
-export function sendMessage(conversationId, content) {
+export function sendMessage(conversationId, content, replyToMessageId = null) {
   return apiRequest(`/api/conversations/${conversationId}/messages`, {
     method: 'POST',
-    body: { content },
+    body: { content, replyToMessageId },
   })
 }
 

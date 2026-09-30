@@ -108,7 +108,10 @@ export function useConversationMessages(conversationId, currentUserId = null) {
     actionError,
     loadMore,
     reload,
-    send: (content) => sendThrough(conversationId, content, sendViaHub, applyIncoming, setSendError),
+    send: (content, replyToId = null) =>
+      sendThrough(
+        conversationId, content, replyToId, sendViaHub, applyIncoming, setSendError,
+      ),
     edit,
     remove,
   }
@@ -123,16 +126,16 @@ export function useConversationMessages(conversationId, currentUserId = null) {
  * avisa los fallos, sube la excepcion, y por eso `sendViaHub` devuelve
  * false y el REST es quien tira con el mensaje de verdad.
  */
-async function sendThrough(conversationId, content, sendViaHub, applyIncoming, onError) {
+async function sendThrough(conversationId, content, replyToId, sendViaHub, applyIncoming, onError) {
   const trimmed = content?.trim() ?? ''
   if (!trimmed) return
 
   try {
-    if (!(await sendViaHub(conversationId, trimmed))) {
+    if (!(await sendViaHub(conversationId, trimmed, replyToId))) {
       // Cuando va por REST no hay difusion en vivo para quien envia, asi que
       // el mensaje guardado se suma a la lista aca. Sin esto aparecia recien
       // al recargar el chat, que es lo que hace pensar que el envio tarda.
-      applyIncoming(await sendMessage(conversationId, trimmed))
+      applyIncoming(await sendMessage(conversationId, trimmed, replyToId))
     }
     onError('')
   } catch (cause) {

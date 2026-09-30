@@ -31,10 +31,13 @@ public static partial class TestSchema
             "CreatedAt" timestamp with time zone NOT NULL DEFAULT now(),
             "EditedAt" timestamp with time zone NULL,
             "IsDeleted" boolean NOT NULL DEFAULT false,
+            "ReplyToMessageId" uuid NULL,
             CONSTRAINT "PK_messages" PRIMARY KEY ("Id"),
             CONSTRAINT "FK_messages_conversations_ConversationId" FOREIGN KEY ("ConversationId") REFERENCES "conversations" ("Id") ON DELETE CASCADE,
-            CONSTRAINT "FK_messages_users_SenderId" FOREIGN KEY ("SenderId") REFERENCES "users" ("Id")
+            CONSTRAINT "FK_messages_users_SenderId" FOREIGN KEY ("SenderId") REFERENCES "users" ("Id"),
+            CONSTRAINT "FK_messages_messages_ReplyToMessageId" FOREIGN KEY ("ReplyToMessageId") REFERENCES "messages" ("Id") ON DELETE SET NULL
         );
         CREATE INDEX "IX_messages_ConversationId_CreatedAt_Id" ON "messages" ("ConversationId", "CreatedAt", "Id");
+        CREATE INDEX "IX_messages_ReplyToMessageId" ON "messages" ("ReplyToMessageId");
         """;
 }

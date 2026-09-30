@@ -68,7 +68,8 @@ public class ConversationsController(
         CancellationToken cancellationToken)
     {
         var userId = User.GetUserId();
-        var result = await _conversationService.SendMessageAsync(userId, id, request.Content, cancellationToken);
+        var result = await _conversationService.SendMessageAsync(
+            userId, id, request.Content, request.ReplyToMessageId, cancellationToken);
 
         // Mismo motivo que en "marcar leido": el front manda por REST cuando
         // Mismo motivo que en "marcar leido": el front manda por REST cuando

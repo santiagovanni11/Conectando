@@ -8,14 +8,33 @@ import { conversationTitle } from '../constants/messages'
 import { ROUTES } from '../constants/routes'
 import MessageThread from '../components/messages/MessageThread'
 import MessageComposer from '../components/messages/MessageComposer'
+import {
+  MessageReplyProvider,
+  useMessageReply,
+} from '../components/messages/MessageReplyContext'
 
-/** Página del hilo: /messages/:conversationId */
+/**
+ * Página del hilo: /messages/:conversationId
+ *
+ * El provider va por fuera a propósito: `useMessageReply` se lee en
+ * ConversationView, que es hija suya. Si el hook corriera en este mismo
+ * componente, todavía no existiría el contexto que tiene que leer.
+ */
 export default function ConversationPage() {
+  return (
+    <MessageReplyProvider>
+      <ConversationView />
+    </MessageReplyProvider>
+  )
+}
+
+function ConversationView() {
   const { conversationId } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
   const thread = useConversationMessages(conversationId, user?.id)
   const typing = useTypingIndicator(conversationId, user?.id)
+  const { replyTo, startReply, cancelReply } = useMessageReply()
   const [conversation, setConversation] = useState(null)
   const [deleteError, setDeleteError] = useState('')
 
@@ -93,12 +112,15 @@ export default function ConversationPage() {
         onLoadMore={thread.loadMore}
         onEdit={thread.edit}
         onDelete={thread.remove}
+        onReply={startReply}
         actionError={thread.actionError}
       />
 
       <MessageComposer
         onSend={thread.send}
         onTyping={typing.notify}
+        replyTo={replyTo}
+        onCancelReply={cancelReply}
         error={thread.sendError || thread.actionError || deleteError}
       />
     </section>

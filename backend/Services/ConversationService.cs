@@ -1,9 +1,6 @@
 using Conectando.Api.Data;
-using Conectando.Api.DTOs.Messages;
 using Conectando.Api.Exceptions;
 using Conectando.Api.Interfaces;
-using Conectando.Api.Models;
-using Conectando.Api.Settings;
 using Microsoft.EntityFrameworkCore;
 
 namespace Conectando.Api.Services;
@@ -64,52 +61,6 @@ public partial class ConversationService(
         return muted;
     }
 
-    /// <summary>El chat vuelve a aparecer si la otra persona escribe algo nuevo.</summary>
-    public async Task<MessageDto> SendMessageAsync(
-        Guid userId,
-        Guid conversationId,
-        string content,
-        CancellationToken cancellationToken = default)
-    {
-        var trimmed = content?.Trim() ?? string.Empty;
-        if (trimmed.Length == 0) throw new EmptyMessageException();
-        if (trimmed.Length > MessageLimits.MaxLength) throw new MessageTooLongException();
-
-        await EnsureIsMemberAsync(userId, conversationId, cancellationToken);
-        await EnsureCanWriteAsync(userId, conversationId, cancellationToken);
-
-        // Si el destinatario había borrado el chat, un mensaje nuevo lo
-        // resurrecta: es el comportamiento de WhatsApp.
-        var membership = await _dbContext.ConversationMembers
-            .FirstOrDefaultAsync(
-                m => m.ConversationId == conversationId && m.UserId != userId,
-                cancellationToken);
-
-        if (membership is not null && membership.DeletedAt is not null)
-        {
-            membership.DeletedAt = null;
-        }
-
-        var message = new Message
-        {
-            Id = Guid.NewGuid(),
-            ConversationId = conversationId,
-            SenderId = userId,
-            Content = trimmed,
-            CreatedAt = DatabaseTime.UtcNow(),
-        };
-
-        _dbContext.Messages.Add(message);
-
-        var conversation = await _dbContext.Conversations.FirstAsync(
-            c => c.Id == conversationId, cancellationToken);
-        conversation.UpdatedAt = message.CreatedAt;
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return await BuildMessageDtoAsync(message.Id, cancellationToken);
-    }
-
     public async Task MarkAsReadAsync(
         Guid userId,
         Guid conversationId,
@@ -124,23 +75,5 @@ public partial class ConversationService(
 
         member.LastReadAt = DatabaseTime.UtcNow();
         await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    /// <summary>No se puede escribir en una conversación con alguien que te bloqueó.</summary>
-    private async Task EnsureCanWriteAsync(
-        Guid userId,
-        Guid conversationId,
-        CancellationToken cancellationToken)
-    {
-        var peerIds = await PeerIdsAsync(conversationId, userId, cancellationToken);
-
-        // Bloqueo entre pares: IsBlockedAsync ya es simétrico.
-        foreach (var peerId in peerIds)
-        {
-            if (await _blockService.IsBlockedAsync(userId, peerId, cancellationToken))
-            {
-                throw new BlockedActionException();
-            }
-        }
     }
 }

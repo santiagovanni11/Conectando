@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import MessageBubble from './MessageBubble'
-import { MAX_MESSAGE_LENGTH } from '../../constants/messages'
+import MessageThreadRow from './MessageThreadRow'
 
 /**
  * Lista del hilo.
  *
  * La edición es en línea, como en WhatsApp: el mensaje se convierte en un
- * campo de texto y se confirma al guardar o al cancelar.
+ * campo de texto y se confirma al guardar o al cancelar. El estado de la
+ * edición es de la lista y no de la fila, porque solo puede haber una
+ * edición abierta a la vez en todo el hilo.
  */
 export default function MessageThread({
   messages,
@@ -17,6 +18,7 @@ export default function MessageThread({
   onLoadMore,
   onEdit,
   onDelete,
+  onReply,
   actionError,
 }) {
   const [editingId, setEditingId] = useState(null)
@@ -64,7 +66,7 @@ export default function MessageThread({
       <ul className="message-thread">
         {messages.map((message) => (
           <li key={message.id} className="message-thread__item">
-            <ThreadRow
+            <MessageThreadRow
               message={message}
               isOwn={message.sender?.id === currentUserId}
               isEditing={editingId === message.id}
@@ -75,73 +77,11 @@ export default function MessageThread({
               onCancelEdit={() => setEditingId(null)}
               onSaveEdit={() => saveEdit(message.id)}
               onDelete={onDelete}
+              onReply={onReply}
             />
           </li>
         ))}
       </ul>
     </>
-  )
-}
-
-/**
- * Contenido de una fila: la burbuja normal o el formulario de edición.
- * Devuelve un <div> porque el <li> lo aporta el contenedor de arriba:
- * dos <li> anidados no son HTML válido y rompen el flex.
- */
-function ThreadRow({
-  message,
-  isOwn,
-  isEditing,
-  error,
-  draft,
-  onDraftChange,
-  onStartEdit,
-  onCancelEdit,
-  onSaveEdit,
-  onDelete,
-}) {
-  if (isEditing) {
-    return (
-      <form
-        className="message-edit"
-        onSubmit={(event) => {
-          event.preventDefault()
-          onSaveEdit()
-        }}
-      >
-        <textarea
-          className="message-edit__input"
-          value={draft}
-          onChange={(event) => onDraftChange(event.target.value)}
-          aria-label="Editar mensaje"
-          maxLength={MAX_MESSAGE_LENGTH}
-          autoFocus
-        />
-        {/* El error va junto a la edición: si apareciera solo en el
-            compositor, abajo, el usuario creería que no se guardó nada. */}
-        {error && (
-          <p className="message-edit__error" role="alert">
-            {error}
-          </p>
-        )}
-        <span className="message-edit__actions">
-          <button type="submit" disabled={!draft.trim()}>
-            Guardar
-          </button>
-          <button type="button" onClick={onCancelEdit}>
-            Cancelar
-          </button>
-        </span>
-      </form>
-    )
-  }
-
-  return (
-    <MessageBubble
-      message={message}
-      isOwn={isOwn}
-      onEdit={onStartEdit}
-      onDelete={onDelete ? () => onDelete(message.id) : undefined}
-    />
   )
 }

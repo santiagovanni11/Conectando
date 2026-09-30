@@ -28,7 +28,8 @@ public static class ConversationTestData
         ConectandoDbContext db,
         Guid conversationId,
         Guid senderId,
-        string content = "Hola")
+        string content = "Hola",
+        Guid? replyToMessageId = null)
     {
         var message = new Message
         {
@@ -37,6 +38,7 @@ public static class ConversationTestData
             SenderId = senderId,
             Content = content,
             CreatedAt = DateTime.UtcNow,
+            ReplyToMessageId = replyToMessageId,
         };
 
         db.Messages.Add(message);
