@@ -65,11 +65,6 @@ export default function LoginPage() {
         required
       />
 
-      {/* Va debajo del campo y no arriba del formulario: es lo que uno busca
-          cuando ya se equivocó, no lo que necesita para entrar. */}
-      <Link className="login-forgot" to={ROUTES.forgotPassword}>
-        ¿Olvidaste tu contraseña?
-      </Link>
       {error && (
         <p className="form-alert" role="alert">
           {error}
@@ -78,6 +73,13 @@ export default function LoginPage() {
       <Button type="submit" block size="lg" loading={submitting}>
         {submitting ? 'Ingresando…' : 'Iniciar sesión'}
       </Button>
+
+      {/* Debajo del botón, no junto al campo. El formulario termina donde
+          termina la acción: primero se entra, y recién abajo queda la
+          salida para el que no pudo. */}
+      <Link className="login-forgot" to={ROUTES.forgotPassword}>
+        ¿Olvidaste tu contraseña?
+      </Link>
     </form>
   )
 }

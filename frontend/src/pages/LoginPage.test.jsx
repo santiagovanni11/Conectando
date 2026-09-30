@@ -51,16 +51,21 @@ describe('LoginPage', () => {
     expect(screen.getByLabelText(/^Email/)).toBeTruthy()
   })
 
-  it('ofrece la vía para recuperar la contraseña', () => {
-    // Va debajo del campo, no arriba del formulario: es lo que uno busca
-    // cuando ya se equivocó al escribir la clave, no lo que hace falta para
-    // entrar. El enlace vive acá y no dentro de la pantalla de recuperación
-    // para no tener que llegar a ella escribiendo la URL.
-    montarConEstado(undefined)
+  it('ofrece la vía para recuperar la contraseña debajo del botón', () => {
+    // Va después del botón de entrar, no junto al campo de contraseña: el
+    // formulario termina donde termina la acción, y abajo queda la salida
+    // para el que no pudo.
+    //
+    // Se asserta el orden en el DOM y no solo que exista: es un detalle de
+    // composición que se pierde en el primer refactor.
+    const { container } = montarConEstado(undefined)
 
-    expect(screen.getByRole('link', { name: /olvid/i })).toHaveAttribute(
-      'href',
-      '/recuperar',
-    )
+    const enlace = screen.getByRole('link', { name: /olvid/i })
+    expect(enlace).toHaveAttribute('href', '/recuperar')
+
+    const hijos = [...container.querySelectorAll('form > *')]
+    const boton = hijos.findIndex((n) => n.tagName === 'BUTTON')
+
+    expect(hijos.indexOf(enlace)).toBeGreaterThan(boton)
   })
 })
